@@ -73,5 +73,65 @@
     "outbound": { "id": "t5-project-staleness", "command": "get_project_staleness", "params": {} },
     "successInbound": { "id": "t5-project-staleness", "status": "success", "result": { "stale": false } },
     "errorInbound": { "id": "t5-project-staleness", "status": "error", "error": { "code": "PARSE_ERROR", "message": "unparseable frame" } }
+  },
+  "run_project": {
+    "outbound": { "id": "t6-run-project", "command": "run_project", "params": { "frozen": true } },
+    "successInbound": { "id": "t6-run-project", "status": "success", "result": { "frozen": false } },
+    "errorInbound": { "id": "t6-run-project", "status": "error", "error": { "code": "NO_MAIN_SCENE", "message": "application/run/main_scene is not set" } }
+  },
+  "stop_project": {
+    "outbound": { "id": "t6-stop-project", "command": "stop_project", "params": {} },
+    "successInbound": { "id": "t6-stop-project", "status": "success", "result": {} },
+    "errorInbound": { "id": "t6-stop-project", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "get_log_messages": {
+    "outbound": { "id": "t6-log-messages", "command": "get_log_messages", "params": { "limit": 20, "severity": "errors" } },
+    "successInbound": { "id": "t6-log-messages", "status": "success", "result": { "messages": [], "count": 0 } },
+    "errorInbound": { "id": "t6-log-messages", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "limit must be positive" } }
+  },
+  "get_stack_trace": {
+    "outbound": { "id": "t6-stack-trace", "command": "get_stack_trace", "params": {} },
+    "successInbound": { "id": "t6-stack-trace", "status": "success", "result": { "error": "", "frames": [] } },
+    "errorInbound": { "id": "t6-stack-trace", "status": "error", "error": { "code": "NO_ERROR", "message": "No error recorded" } }
+  },
+  "capture_game_screenshot": {
+    "outbound": { "id": "t6-game-screenshot", "command": "capture_game_screenshot", "params": { "max_width": 1280, "format": "png" } },
+    "successInbound": { "id": "t6-game-screenshot", "status": "success", "result": { "image_base64": "iVBOR", "width": 1280, "height": 720 } },
+    "errorInbound": { "id": "t6-game-screenshot", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running. Use run_project first." } }
+  },
+  "capture_editor_screenshot": {
+    "outbound": { "id": "t6-editor-screenshot", "command": "capture_editor_screenshot", "params": { "max_width": 640, "format": "png" } },
+    "successInbound": { "id": "t6-editor-screenshot", "status": "success", "result": { "image_base64": "iVBOR", "width": 640, "height": 360 } },
+    "errorInbound": { "id": "t6-editor-screenshot", "status": "error", "error": { "code": "NO_VIEWPORT", "message": "Could not find editor viewport" } }
+  },
+  "get_resource_info": {
+    "outbound": { "id": "t6-resource-info", "command": "get_resource_info", "params": { "resource_path": "res://icon.svg" } },
+    "successInbound": { "id": "t6-resource-info", "status": "success", "result": { "resource_path": "res://icon.svg", "resource_type": "Texture2D" } },
+    "errorInbound": { "id": "t6-resource-info", "status": "error", "error": { "code": "RESOURCE_NOT_FOUND", "message": "Resource not found: res://icon.svg" } }
+  },
+  "get_spatial_info": {
+    "outbound": { "id": "t6-spatial-info", "command": "get_spatial_info", "params": { "node_path": "/root/Main", "include_children": true } },
+    "successInbound": { "id": "t6-spatial-info", "status": "success", "result": { "nodes": [], "count": 0 } },
+    "errorInbound": { "id": "t6-spatial-info", "status": "error", "error": { "code": "NOT_NODE3D", "message": "Node is not a Node3D: /root/Main" } }
+  },
+  "get_scene_bounds": {
+    "outbound": { "id": "t6-scene-bounds", "command": "get_scene_bounds", "params": {} },
+    "successInbound": { "id": "t6-scene-bounds", "status": "success", "result": { "count": 3 } },
+    "errorInbound": { "id": "t6-scene-bounds", "status": "error", "error": { "code": "NO_GEOMETRY", "message": "No VisualInstance3D or populated GridMap nodes found" } }
+  },
+  "get_input_map": {
+    "outbound": { "id": "t6-input-map", "command": "get_input_map", "params": {} },
+    "successInbound": { "id": "t6-input-map", "status": "success", "result": { "actions": [], "source": "project" } },
+    "errorInbound": { "id": "t6-input-map", "status": "error", "error": { "code": "NO_SESSION", "message": "No active debug session" } }
+  },
+  "execute_input_sequence": {
+    "outbound": { "id": "t6-input-sequence", "command": "execute_input_sequence", "params": { "inputs": [{ "action": "ui_accept", "start_ms": 0 }] } },
+    "successInbound": { "id": "t6-input-sequence", "status": "success", "result": { "completed": true } },
+    "errorInbound": { "id": "t6-input-sequence", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "type_text": {
+    "outbound": { "id": "t6-type-text", "command": "type_text", "params": { "text": "hello" } },
+    "successInbound": { "id": "t6-type-text", "status": "success", "result": { "typed": 5 } },
+    "errorInbound": { "id": "t6-type-text", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "text is required and must not be empty" } }
   }
 }

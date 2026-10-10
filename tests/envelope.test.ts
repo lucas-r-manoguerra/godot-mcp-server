@@ -31,7 +31,10 @@ describe("buildOutboundFrame", () => {
   });
 
   it("strips server-local options before send", () => {
-    const params: Record<string, unknown> = { node_path: "/root/Main", timeout_ms: 5000, max_width: 640 };
+    // Stratum B: max_width is a verbatim addon wire param (screenshots),
+    // so it is asserted forwarded by the AC-03 screenshot fixtures, not
+    // stripped here.
+    const params: Record<string, unknown> = { node_path: "/root/Main", timeout_ms: 5000 };
     for (const key of SERVER_LOCAL_OPTION_KEYS) {
       params[key] = 1;
     }
