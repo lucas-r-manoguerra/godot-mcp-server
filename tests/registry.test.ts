@@ -18,6 +18,7 @@ import { toolDefs as nodeDefs } from "../src/tools/nodes.js";
 import { toolDefs as signalDefs } from "../src/tools/signals.js";
 import { toolDefs as viewportDefs } from "../src/tools/viewport.js";
 import { toolDefs as assetDefs } from "../src/tools/assets.js";
+import { toolDefs as verifyDefs } from "../src/tools/verify.js";
 import { EXEC_DESCRIPTION_FENCE } from "../src/server/toolRegistry.js";
 
 function def(name: string, kind: ToolDef["kind"] = "custom", extra: Partial<ToolDef> = {}): ToolDef {
@@ -211,9 +212,9 @@ describe("tool registry", () => {
     expect(describeSend.mock.calls[0]?.[1]).toEqual({ class_name: "Nope", detail: "brief" });
   });
 
-  it("gap tools B register: 3 signals + 2 viewport + 3 assets", () => {
+  it("gap tools B register: 3 signals + 2 viewport + 3 assets + verify", () => {
     // Spec 3.2 second half: connect/disconnect/trace | set_3d_viewport,
-    // focus_selection | import_asset, uid_resolve, list_assets.
+    // focus_selection | import_asset, uid_resolve, list_assets | verify.
     expect(signalDefs.map((tool) => tool.name)).toEqual([
       "connect_signal",
       "disconnect_signal",
@@ -228,8 +229,9 @@ describe("tool registry", () => {
       "uid_resolve",
       "list_assets",
     ]);
+    expect(verifyDefs.map((tool) => tool.name)).toEqual(["verify"]);
     const registry = new ToolRegistry();
-    for (const tool of [...signalDefs, ...viewportDefs, ...assetDefs]) {
+    for (const tool of [...signalDefs, ...viewportDefs, ...assetDefs, ...verifyDefs]) {
       expect(() => registry.register_tool(tool)).not.toThrow();
       expect(registry.resolve(tool.name)?.kind).toBe("gap");
     }
@@ -250,11 +252,12 @@ describe("tool registry", () => {
         expect(tool.undoAction).toBe(expected[tool.name]);
       }
     }
-    // Viewport navigation and assets: Undo N/A by rule.
+    // Viewport navigation and assets: Undo N/A by rule; verify extended.
     for (const tool of [...viewportDefs, ...assetDefs]) {
       expect(tool.mutating ?? false).toBe(false);
       expect(tool.undoAction).toBeUndefined();
     }
+    expect(verifyDefs[0]?.budgetClass).toBe("extended");
   });
 
   it("gap tools B apply their spec defaults before send", async () => {
