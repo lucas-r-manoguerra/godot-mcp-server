@@ -580,5 +580,7 @@ Repo: <https://github.com/lucas-r-manoguerra/godot-mcp-server>. Pushing a
 `v*` tag runs `.github/workflows/release.yml`, which builds, packs
 (`npm pack` → `godot-mcp-server-<version>.tgz`), writes `checksums.txt`,
 and attaches both to the GitHub release. Pending addon-side work for the ⏳
-tools above is tracked against the addon implementation; the server side is
-fixture-covered and ships the exact frames the addon must answer.
+tools above is tracked against the addon implementation (including the
+upstream auth-handshake proposal,
+<https://github.com/satelliteoflove/godot-mcp-server/issues/404>); the
+server side is fixture-covered and ships the exact frames the addon must answer.
