@@ -7,11 +7,18 @@
   "bin": {
     "godot-mcp-server": "./dist/cli.js"
   },
+  "files": [
+    "dist/**",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
   "engines": {
     "node": ">=18"
   },
   "scripts": {
     "build": "tsc",
+    "prepack": "npm run build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },

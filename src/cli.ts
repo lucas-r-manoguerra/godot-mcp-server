@@ -1,6 +1,8 @@
+#!/usr/bin/env node
 // bin godot-mcp-server: flag parse plus flags/config/env merge only.
 // Tool wiring lives in buildServer; transports own their listeners.
 
+import { realpathSync } from "node:fs";
 import { loadConfig } from "./server/config.js";
 import { buildServer } from "./server/buildServer.js";
 import { serveStdio } from "./transports/stdio.js";
@@ -74,5 +76,16 @@ export async function main(
   else await serveStdio();
 }
 
-const invokedAsBin = (process.argv[1] ?? "").endsWith("cli.js");
-if (invokedAsBin) void main();
+// Resolved through realpath so npm .bin symlinks (argv[1] names the
+// link, not cli.js) still count as bin invocations. Importers (tests,
+// programmatic use) resolve to any other entry file and skip main().
+function isInvokedAsBin(): boolean {
+  try {
+    const entry = process.argv[1] ?? "";
+    return entry.length > 0 && realpathSync(entry).endsWith("cli.js");
+  } catch {
+    return false;
+  }
+}
+
+if (isInvokedAsBin()) void main();
