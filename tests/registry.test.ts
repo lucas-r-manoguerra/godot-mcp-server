@@ -8,6 +8,12 @@ import {
 } from "../src/server/toolRegistry.js";
 import { toolDefs as animationDefs } from "../src/tools/passthrough/animation.js";
 import { toolDefs as tileDefs } from "../src/tools/passthrough/tiles.js";
+import { toolDefs as profilerDefs } from "../src/tools/passthrough/profiler.js";
+import { toolDefs as runtimeDefs } from "../src/tools/passthrough/runtime.js";
+import { toolDefs as gameTimeDefs } from "../src/tools/passthrough/gameTime.js";
+import { toolDefs as execDefs } from "../src/tools/passthrough/exec.js";
+import { toolDefs as meshesDefs } from "../src/tools/passthrough/meshes.js";
+import { EXEC_DESCRIPTION_FENCE } from "../src/server/toolRegistry.js";
 
 function def(name: string, kind: ToolDef["kind"] = "custom", extra: Partial<ToolDef> = {}): ToolDef {
   return {
@@ -95,6 +101,26 @@ describe("tool registry", () => {
     expect(writes.length).toBe(9 + 8);
     for (const tool of writes) {
       expect(tool.undoAction).toBeNull();
+    }
+  });
+
+  it("stratum C remainder defs register; exec descriptions carry the fence", () => {
+    // Profiler 6 + runtime 4 + game-time 5 + exec 4 + meshes 1, verbatim
+    // from the addon get_commands() blocks.
+    expect(profilerDefs.length).toBe(6);
+    expect(runtimeDefs.length).toBe(4);
+    expect(gameTimeDefs.length).toBe(5);
+    expect(execDefs.length).toBe(4);
+    expect(meshesDefs.length).toBe(1);
+    const registry = new ToolRegistry();
+    for (const tool of [...profilerDefs, ...runtimeDefs, ...gameTimeDefs, ...execDefs, ...meshesDefs]) {
+      expect(() => registry.register_tool(tool)).not.toThrow();
+      expect(registry.resolve(tool.name)?.kind).toBe("passthrough");
+    }
+    // Spec 3.3 fence (proposal risk 5): every exec description names the
+    // escape hatch and points at typed tools.
+    for (const tool of execDefs) {
+      expect(tool.description).toContain(EXEC_DESCRIPTION_FENCE);
     }
   });
 });

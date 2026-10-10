@@ -318,5 +318,105 @@
     "outbound": { "id": "t7a-set-gridmap-cells-batch", "command": "set_gridmap_cells_batch", "params": {"node_path": "/root/Main/Grid", "cells": [{"coords": {"x": 0, "y": 0, "z": 0}, "item": 1}]} },
     "successInbound": { "id": "t7a-set-gridmap-cells-batch", "status": "success", "result": {"cells_set": 1} },
     "errorInbound": { "id": "t7a-set-gridmap-cells-batch", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "cells is required" } }
+  },
+  "get_performance_metrics": {
+    "outbound": { "id": "t7b-get-performance-metrics", "command": "get_performance_metrics", "params": {} },
+    "successInbound": { "id": "t7b-get-performance-metrics", "status": "success", "result": {"fps": 60} },
+    "errorInbound": { "id": "t7b-get-performance-metrics", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "start_profiler": {
+    "outbound": { "id": "t7b-start-profiler", "command": "start_profiler", "params": {} },
+    "successInbound": { "id": "t7b-start-profiler", "status": "success", "result": {"message": "Frame profiler started"} },
+    "errorInbound": { "id": "t7b-start-profiler", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "stop_profiler": {
+    "outbound": { "id": "t7b-stop-profiler", "command": "stop_profiler", "params": {} },
+    "successInbound": { "id": "t7b-stop-profiler", "status": "success", "result": {"message": "Frame profiler stopped"} },
+    "errorInbound": { "id": "t7b-stop-profiler", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "get_profiler_data": {
+    "outbound": { "id": "t7b-get-profiler-data", "command": "get_profiler_data", "params": {} },
+    "successInbound": { "id": "t7b-get-profiler-data", "status": "success", "result": {"frames": []} },
+    "errorInbound": { "id": "t7b-get-profiler-data", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "get_active_processes": {
+    "outbound": { "id": "t7b-get-active-processes", "command": "get_active_processes", "params": {} },
+    "successInbound": { "id": "t7b-get-active-processes", "status": "success", "result": {"processes": []} },
+    "errorInbound": { "id": "t7b-get-active-processes", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "get_signal_connections": {
+    "outbound": { "id": "t7b-get-signal-connections", "command": "get_signal_connections", "params": {"node_path": "/root/Main/Button"} },
+    "successInbound": { "id": "t7b-get-signal-connections", "status": "success", "result": {"connections": []} },
+    "errorInbound": { "id": "t7b-get-signal-connections", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "get_runtime_state": {
+    "outbound": { "id": "t7b-get-runtime-state", "command": "get_runtime_state", "params": {"group": "mcp_watch"} },
+    "successInbound": { "id": "t7b-get-runtime-state", "status": "success", "result": {"nodes": []} },
+    "errorInbound": { "id": "t7b-get-runtime-state", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "watch_start": {
+    "outbound": { "id": "t7b-watch-start", "command": "watch_start", "params": {"hz": 20, "duration_ms": 1000} },
+    "successInbound": { "id": "t7b-watch-start", "status": "success", "result": {"started": true} },
+    "errorInbound": { "id": "t7b-watch-start", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "watch_collect": {
+    "outbound": { "id": "t7b-watch-collect", "command": "watch_collect", "params": {} },
+    "successInbound": { "id": "t7b-watch-collect", "status": "success", "result": {"samples": []} },
+    "errorInbound": { "id": "t7b-watch-collect", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "watch_stop": {
+    "outbound": { "id": "t7b-watch-stop", "command": "watch_stop", "params": {} },
+    "successInbound": { "id": "t7b-watch-stop", "status": "success", "result": {"stopped": true} },
+    "errorInbound": { "id": "t7b-watch-stop", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "game_time_freeze": {
+    "outbound": { "id": "t7b-game-time-freeze", "command": "game_time_freeze", "params": {} },
+    "successInbound": { "id": "t7b-game-time-freeze", "status": "success", "result": {"frozen": true} },
+    "errorInbound": { "id": "t7b-game-time-freeze", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "game_time_step": {
+    "outbound": { "id": "t7b-game-time-step", "command": "game_time_step", "params": {"frames": 5} },
+    "successInbound": { "id": "t7b-game-time-step", "status": "success", "result": {"frames": 5} },
+    "errorInbound": { "id": "t7b-game-time-step", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "game_time_step_until": {
+    "outbound": { "id": "t7b-game-time-step-until", "command": "game_time_step_until", "params": {"until": "frozen == false", "max_ms": 5000} },
+    "successInbound": { "id": "t7b-game-time-step-until", "status": "success", "result": {"met": true} },
+    "errorInbound": { "id": "t7b-game-time-step-until", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "game_time_thaw": {
+    "outbound": { "id": "t7b-game-time-thaw", "command": "game_time_thaw", "params": {} },
+    "successInbound": { "id": "t7b-game-time-thaw", "status": "success", "result": {"frozen": false} },
+    "errorInbound": { "id": "t7b-game-time-thaw", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "game_time_status": {
+    "outbound": { "id": "t7b-game-time-status", "command": "game_time_status", "params": {} },
+    "successInbound": { "id": "t7b-game-time-status", "status": "success", "result": {"frozen": false, "frames": 0} },
+    "errorInbound": { "id": "t7b-game-time-status", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "exec_run": {
+    "outbound": { "id": "t7b-exec-run", "command": "exec_run", "params": {"source": "return 1 + 1"} },
+    "successInbound": { "id": "t7b-exec-run", "status": "success", "result": {"completed": true, "result": 2} },
+    "errorInbound": { "id": "t7b-exec-run", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "exec_list": {
+    "outbound": { "id": "t7b-exec-list", "command": "exec_list", "params": {} },
+    "successInbound": { "id": "t7b-exec-list", "status": "success", "result": {"nodes": [], "count": 0} },
+    "errorInbound": { "id": "t7b-exec-list", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "exec_remove": {
+    "outbound": { "id": "t7b-exec-remove", "command": "exec_remove", "params": {"name": "probe"} },
+    "successInbound": { "id": "t7b-exec-remove", "status": "success", "result": {"removed": true} },
+    "errorInbound": { "id": "t7b-exec-remove", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "exec_clear": {
+    "outbound": { "id": "t7b-exec-clear", "command": "exec_clear", "params": {} },
+    "successInbound": { "id": "t7b-exec-clear", "status": "success", "result": {"cleared": true} },
+    "errorInbound": { "id": "t7b-exec-clear", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "validate_meshes": {
+    "outbound": { "id": "t7b-validate-meshes", "command": "validate_meshes", "params": {"max_findings": 25} },
+    "successInbound": { "id": "t7b-validate-meshes", "status": "success", "result": {"total": 0} },
+    "errorInbound": { "id": "t7b-validate-meshes", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
   }
 }
