@@ -6,6 +6,8 @@ import {
   ToolRegistry,
   type ToolDef,
 } from "../src/server/toolRegistry.js";
+import { toolDefs as animationDefs } from "../src/tools/passthrough/animation.js";
+import { toolDefs as tileDefs } from "../src/tools/passthrough/tiles.js";
 
 function def(name: string, kind: ToolDef["kind"] = "custom", extra: Partial<ToolDef> = {}): ToolDef {
   return {
@@ -75,5 +77,24 @@ describe("tool registry", () => {
     const err = registry.unknownCommand("server_stats");
     expect(err._meta.code).toBe("UNKNOWN_COMMAND");
     expect(err._meta.hint).toContain("server_status");
+  });
+
+  it("stratum C tile/animation defs register; writes carry undoAction null", () => {
+    // 16 animation + 11 TileMapLayer + 10 GridMap/MeshLibrary, verbatim
+    // from the addon get_commands() blocks.
+    expect(animationDefs.length).toBe(16);
+    expect(tileDefs.length).toBe(21);
+    const registry = new ToolRegistry();
+    for (const tool of [...animationDefs, ...tileDefs]) {
+      expect(() => registry.register_tool(tool)).not.toThrow();
+      expect(registry.resolve(tool.name)?.kind).toBe("passthrough");
+    }
+    // Spec 3.3 / AC-07: tile/animation writes keep addon behavior with
+    // no new undo promise — the null marks the explicit v0.1.0 exemption.
+    const writes = [...animationDefs, ...tileDefs].filter((tool) => tool.mutating === true);
+    expect(writes.length).toBe(9 + 8);
+    for (const tool of writes) {
+      expect(tool.undoAction).toBeNull();
+    }
   });
 });
