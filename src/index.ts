@@ -25,4 +25,23 @@ export {
 export type { ServerStatusRecord } from "./server/serverStatus.js";
 export { loadConfig, defaultConfig } from "./server/config.js";
 export type { GodotMcpConfig } from "./server/config.js";
+export {
+  CORE_PLUGIN_LIMITS,
+  PLUGIN_LIMITS_POINTER,
+  PluginConfinementError,
+  PluginHotLoader,
+  PluginStartupError,
+  assertHandlerConfined,
+  defaultPluginImporter,
+  isGameContentName,
+  loadStartupPlugins,
+  normalizePluginDef,
+  normalizePluginModule,
+  resolvePluginDir,
+} from "./server/pluginLoader.js";
+export type {
+  HotLoadResult,
+  LoadStartupPluginsOptions,
+  PluginModuleImporter,
+} from "./server/pluginLoader.js";
 export { SERVER_NAME, SERVER_VERSION } from "./version.js";
