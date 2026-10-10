@@ -133,5 +133,190 @@
     "outbound": { "id": "t6-type-text", "command": "type_text", "params": { "text": "hello" } },
     "successInbound": { "id": "t6-type-text", "status": "success", "result": { "typed": 5 } },
     "errorInbound": { "id": "t6-type-text", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "text is required and must not be empty" } }
+  },
+  "list_animation_players": {
+    "outbound": { "id": "t7a-list-animation-players", "command": "list_animation_players", "params": {} },
+    "successInbound": { "id": "t7a-list-animation-players", "status": "success", "result": {"animation_players": ["/root/Main/AnimationPlayer"]} },
+    "errorInbound": { "id": "t7a-list-animation-players", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Root node not found" } }
+  },
+  "get_animation_player_info": {
+    "outbound": { "id": "t7a-get-animation-player-info", "command": "get_animation_player_info", "params": {"node_path": "/root/Main/AnimationPlayer"} },
+    "successInbound": { "id": "t7a-get-animation-player-info", "status": "success", "result": {"animations": ["walk"]} },
+    "errorInbound": { "id": "t7a-get-animation-player-info", "status": "error", "error": { "code": "NOT_ANIMATION_PLAYER", "message": "Node is not an AnimationPlayer: /root/Main" } }
+  },
+  "get_animation_details": {
+    "outbound": { "id": "t7a-get-animation-details", "command": "get_animation_details", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk"} },
+    "successInbound": { "id": "t7a-get-animation-details", "status": "success", "result": {"length": 1.0} },
+    "errorInbound": { "id": "t7a-get-animation-details", "status": "error", "error": { "code": "ANIMATION_NOT_FOUND", "message": "Animation not found: run" } }
+  },
+  "get_track_keyframes": {
+    "outbound": { "id": "t7a-get-track-keyframes", "command": "get_track_keyframes", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk", "track_index": 0} },
+    "successInbound": { "id": "t7a-get-track-keyframes", "status": "success", "result": {"keys": []} },
+    "errorInbound": { "id": "t7a-get-track-keyframes", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "track_index is required" } }
+  },
+  "play_animation": {
+    "outbound": { "id": "t7a-play-animation", "command": "play_animation", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk"} },
+    "successInbound": { "id": "t7a-play-animation", "status": "success", "result": {"playing": "walk"} },
+    "errorInbound": { "id": "t7a-play-animation", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "stop_animation": {
+    "outbound": { "id": "t7a-stop-animation", "command": "stop_animation", "params": {"node_path": "/root/Main/AnimationPlayer"} },
+    "successInbound": { "id": "t7a-stop-animation", "status": "success", "result": {"stopped": true} },
+    "errorInbound": { "id": "t7a-stop-animation", "status": "error", "error": { "code": "NOT_ANIMATION_PLAYER", "message": "Node is not an AnimationPlayer: /root/Main" } }
+  },
+  "seek_animation": {
+    "outbound": { "id": "t7a-seek-animation", "command": "seek_animation", "params": {"node_path": "/root/Main/AnimationPlayer", "seconds": 0.5} },
+    "successInbound": { "id": "t7a-seek-animation", "status": "success", "result": {"position": 0.5} },
+    "errorInbound": { "id": "t7a-seek-animation", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "seconds is required" } }
+  },
+  "create_animation": {
+    "outbound": { "id": "t7a-create-animation", "command": "create_animation", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "jump"} },
+    "successInbound": { "id": "t7a-create-animation", "status": "success", "result": {"created": "jump"} },
+    "errorInbound": { "id": "t7a-create-animation", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "node_path is required" } }
+  },
+  "delete_animation": {
+    "outbound": { "id": "t7a-delete-animation", "command": "delete_animation", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "jump"} },
+    "successInbound": { "id": "t7a-delete-animation", "status": "success", "result": {"deleted": "jump"} },
+    "errorInbound": { "id": "t7a-delete-animation", "status": "error", "error": { "code": "ANIMATION_NOT_FOUND", "message": "Animation not found: jump" } }
+  },
+  "update_animation_properties": {
+    "outbound": { "id": "t7a-update-animation-properties", "command": "update_animation_properties", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk", "length": 2.0} },
+    "successInbound": { "id": "t7a-update-animation-properties", "status": "success", "result": {"updated": "walk"} },
+    "errorInbound": { "id": "t7a-update-animation-properties", "status": "error", "error": { "code": "ANIMATION_NOT_FOUND", "message": "Animation not found: walk" } }
+  },
+  "add_animation_track": {
+    "outbound": { "id": "t7a-add-animation-track", "command": "add_animation_track", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk", "track_type": "value", "track_path": "Sprite2D:position"} },
+    "successInbound": { "id": "t7a-add-animation-track", "status": "success", "result": {"track_index": 3} },
+    "errorInbound": { "id": "t7a-add-animation-track", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "track_type is required" } }
+  },
+  "remove_animation_track": {
+    "outbound": { "id": "t7a-remove-animation-track", "command": "remove_animation_track", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk", "track_index": 3} },
+    "successInbound": { "id": "t7a-remove-animation-track", "status": "success", "result": {"removed": 3} },
+    "errorInbound": { "id": "t7a-remove-animation-track", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "track_index is required" } }
+  },
+  "add_keyframe": {
+    "outbound": { "id": "t7a-add-keyframe", "command": "add_keyframe", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk", "track_index": 0, "time": 0.0, "value": 1} },
+    "successInbound": { "id": "t7a-add-keyframe", "status": "success", "result": {"keyframe_index": 0} },
+    "errorInbound": { "id": "t7a-add-keyframe", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "value is required" } }
+  },
+  "create_reset_keys": {
+    "outbound": { "id": "t7a-create-reset-keys", "command": "create_reset_keys", "params": {"node_path": "/root/Main/AnimationPlayer"} },
+    "successInbound": { "id": "t7a-create-reset-keys", "status": "success", "result": {"added": [], "skipped": []} },
+    "errorInbound": { "id": "t7a-create-reset-keys", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Missing" } }
+  },
+  "remove_keyframe": {
+    "outbound": { "id": "t7a-remove-keyframe", "command": "remove_keyframe", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk", "track_index": 0, "keyframe_index": 0} },
+    "successInbound": { "id": "t7a-remove-keyframe", "status": "success", "result": {"removed": 0} },
+    "errorInbound": { "id": "t7a-remove-keyframe", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "keyframe_index is required" } }
+  },
+  "update_keyframe": {
+    "outbound": { "id": "t7a-update-keyframe", "command": "update_keyframe", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk", "track_index": 0, "keyframe_index": 0, "time": 1.0} },
+    "successInbound": { "id": "t7a-update-keyframe", "status": "success", "result": {"updated": 0} },
+    "errorInbound": { "id": "t7a-update-keyframe", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "keyframe_index is required" } }
+  },
+  "list_tilemap_layers": {
+    "outbound": { "id": "t7a-list-tilemap-layers", "command": "list_tilemap_layers", "params": {} },
+    "successInbound": { "id": "t7a-list-tilemap-layers", "status": "success", "result": {"layers": ["/root/Main/Ground"]} },
+    "errorInbound": { "id": "t7a-list-tilemap-layers", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Root node not found" } }
+  },
+  "get_tilemap_layer_info": {
+    "outbound": { "id": "t7a-get-tilemap-layer-info", "command": "get_tilemap_layer_info", "params": {"node_path": "/root/Main/Ground"} },
+    "successInbound": { "id": "t7a-get-tilemap-layer-info", "status": "success", "result": {"cell_size": {"x": 16, "y": 16}} },
+    "errorInbound": { "id": "t7a-get-tilemap-layer-info", "status": "error", "error": { "code": "NOT_TILEMAP_LAYER", "message": "Node is not a TileMapLayer: /root/Main" } }
+  },
+  "get_tileset_info": {
+    "outbound": { "id": "t7a-get-tileset-info", "command": "get_tileset_info", "params": {"node_path": "/root/Main/Ground"} },
+    "successInbound": { "id": "t7a-get-tileset-info", "status": "success", "result": {"source_count": 1} },
+    "errorInbound": { "id": "t7a-get-tileset-info", "status": "error", "error": { "code": "NO_TILESET", "message": "TileMapLayer has no TileSet assigned" } }
+  },
+  "get_used_cells": {
+    "outbound": { "id": "t7a-get-used-cells", "command": "get_used_cells", "params": {"node_path": "/root/Main/Ground"} },
+    "successInbound": { "id": "t7a-get-used-cells", "status": "success", "result": {"count": 4} },
+    "errorInbound": { "id": "t7a-get-used-cells", "status": "error", "error": { "code": "NOT_TILEMAP_LAYER", "message": "Node is not a TileMapLayer: /root/Main" } }
+  },
+  "get_cell": {
+    "outbound": { "id": "t7a-get-cell", "command": "get_cell", "params": {"node_path": "/root/Main/Ground", "coords": {"x": 1, "y": 2}} },
+    "successInbound": { "id": "t7a-get-cell", "status": "success", "result": {"source_id": 0} },
+    "errorInbound": { "id": "t7a-get-cell", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "coords is required" } }
+  },
+  "set_cell": {
+    "outbound": { "id": "t7a-set-cell", "command": "set_cell", "params": {"node_path": "/root/Main/Ground", "coords": {"x": 1, "y": 2}, "source_id": 0} },
+    "successInbound": { "id": "t7a-set-cell", "status": "success", "result": {"source_id": 0} },
+    "errorInbound": { "id": "t7a-set-cell", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Missing" } }
+  },
+  "erase_cell": {
+    "outbound": { "id": "t7a-erase-cell", "command": "erase_cell", "params": {"node_path": "/root/Main/Ground", "coords": {"x": 1, "y": 2}} },
+    "successInbound": { "id": "t7a-erase-cell", "status": "success", "result": {"erased": {"x": 1, "y": 2}} },
+    "errorInbound": { "id": "t7a-erase-cell", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Missing" } }
+  },
+  "clear_layer": {
+    "outbound": { "id": "t7a-clear-layer", "command": "clear_layer", "params": {"node_path": "/root/Main/Ground"} },
+    "successInbound": { "id": "t7a-clear-layer", "status": "success", "result": {"cleared": true} },
+    "errorInbound": { "id": "t7a-clear-layer", "status": "error", "error": { "code": "NOT_TILEMAP_LAYER", "message": "Node is not a TileMapLayer: /root/Main" } }
+  },
+  "get_cells_in_region": {
+    "outbound": { "id": "t7a-get-cells-in-region", "command": "get_cells_in_region", "params": {"node_path": "/root/Main/Ground", "min_coords": {"x": 0, "y": 0}, "max_coords": {"x": 4, "y": 4}} },
+    "successInbound": { "id": "t7a-get-cells-in-region", "status": "success", "result": {"count": 2} },
+    "errorInbound": { "id": "t7a-get-cells-in-region", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "min_coords is required" } }
+  },
+  "set_cells_batch": {
+    "outbound": { "id": "t7a-set-cells-batch", "command": "set_cells_batch", "params": {"node_path": "/root/Main/Ground", "cells": [{"coords": {"x": 0, "y": 0}}]} },
+    "successInbound": { "id": "t7a-set-cells-batch", "status": "success", "result": {"cells_set": 1} },
+    "errorInbound": { "id": "t7a-set-cells-batch", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "cells is required" } }
+  },
+  "convert_coords": {
+    "outbound": { "id": "t7a-convert-coords", "command": "convert_coords", "params": {"node_path": "/root/Main/Ground", "map_coords": {"x": 1, "y": 2}} },
+    "successInbound": { "id": "t7a-convert-coords", "status": "success", "result": {"direction": "map_to_local"} },
+    "errorInbound": { "id": "t7a-convert-coords", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "Either local_position or map_coords is required" } }
+  },
+  "list_gridmaps": {
+    "outbound": { "id": "t7a-list-gridmaps", "command": "list_gridmaps", "params": {} },
+    "successInbound": { "id": "t7a-list-gridmaps", "status": "success", "result": {"gridmaps": []} },
+    "errorInbound": { "id": "t7a-list-gridmaps", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Root node not found" } }
+  },
+  "get_gridmap_info": {
+    "outbound": { "id": "t7a-get-gridmap-info", "command": "get_gridmap_info", "params": {"node_path": "/root/Main/Grid"} },
+    "successInbound": { "id": "t7a-get-gridmap-info", "status": "success", "result": {"cell_size": 1.0} },
+    "errorInbound": { "id": "t7a-get-gridmap-info", "status": "error", "error": { "code": "NOT_GRIDMAP", "message": "Node is not a GridMap: /root/Main" } }
+  },
+  "get_meshlib_info": {
+    "outbound": { "id": "t7a-get-meshlib-info", "command": "get_meshlib_info", "params": {"node_path": "/root/Main/Grid"} },
+    "successInbound": { "id": "t7a-get-meshlib-info", "status": "success", "result": {"item_count": 2} },
+    "errorInbound": { "id": "t7a-get-meshlib-info", "status": "error", "error": { "code": "NO_MESH_LIBRARY", "message": "GridMap has no MeshLibrary assigned" } }
+  },
+  "get_gridmap_used_cells": {
+    "outbound": { "id": "t7a-get-gridmap-used-cells", "command": "get_gridmap_used_cells", "params": {"node_path": "/root/Main/Grid"} },
+    "successInbound": { "id": "t7a-get-gridmap-used-cells", "status": "success", "result": {"count": 3} },
+    "errorInbound": { "id": "t7a-get-gridmap-used-cells", "status": "error", "error": { "code": "NOT_GRIDMAP", "message": "Node is not a GridMap: /root/Main" } }
+  },
+  "get_gridmap_cell": {
+    "outbound": { "id": "t7a-get-gridmap-cell", "command": "get_gridmap_cell", "params": {"node_path": "/root/Main/Grid", "coords": {"x": 0, "y": 0, "z": 0}} },
+    "successInbound": { "id": "t7a-get-gridmap-cell", "status": "success", "result": {"item": 1} },
+    "errorInbound": { "id": "t7a-get-gridmap-cell", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "coords is required" } }
+  },
+  "set_gridmap_cell": {
+    "outbound": { "id": "t7a-set-gridmap-cell", "command": "set_gridmap_cell", "params": {"node_path": "/root/Main/Grid", "coords": {"x": 0, "y": 0, "z": 0}, "item": 1} },
+    "successInbound": { "id": "t7a-set-gridmap-cell", "status": "success", "result": {"item": 1} },
+    "errorInbound": { "id": "t7a-set-gridmap-cell", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "item is required" } }
+  },
+  "clear_gridmap_cell": {
+    "outbound": { "id": "t7a-clear-gridmap-cell", "command": "clear_gridmap_cell", "params": {"node_path": "/root/Main/Grid", "coords": {"x": 0, "y": 0, "z": 0}} },
+    "successInbound": { "id": "t7a-clear-gridmap-cell", "status": "success", "result": {"cleared": true} },
+    "errorInbound": { "id": "t7a-clear-gridmap-cell", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Missing" } }
+  },
+  "clear_gridmap": {
+    "outbound": { "id": "t7a-clear-gridmap", "command": "clear_gridmap", "params": {"node_path": "/root/Main/Grid"} },
+    "successInbound": { "id": "t7a-clear-gridmap", "status": "success", "result": {"cleared": true} },
+    "errorInbound": { "id": "t7a-clear-gridmap", "status": "error", "error": { "code": "NOT_GRIDMAP", "message": "Node is not a GridMap: /root/Main" } }
+  },
+  "get_cells_by_item": {
+    "outbound": { "id": "t7a-get-cells-by-item", "command": "get_cells_by_item", "params": {"node_path": "/root/Main/Grid", "item": 1} },
+    "successInbound": { "id": "t7a-get-cells-by-item", "status": "success", "result": {"count": 2} },
+    "errorInbound": { "id": "t7a-get-cells-by-item", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "item is required" } }
+  },
+  "set_gridmap_cells_batch": {
+    "outbound": { "id": "t7a-set-gridmap-cells-batch", "command": "set_gridmap_cells_batch", "params": {"node_path": "/root/Main/Grid", "cells": [{"coords": {"x": 0, "y": 0, "z": 0}, "item": 1}]} },
+    "successInbound": { "id": "t7a-set-gridmap-cells-batch", "status": "success", "result": {"cells_set": 1} },
+    "errorInbound": { "id": "t7a-set-gridmap-cells-batch", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "cells is required" } }
   }
 }
