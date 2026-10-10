@@ -1,0 +1,33 @@
+# Release archives: on v* tags, build, pack the tarball, checksum it,
+# and attach both files to the GitHub release.
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npx vitest run
+      - run: npm pack
+      - name: Write checksums
+        run: sha256sum godot-mcp-server-*.tgz > checksums.txt
+      - name: Attach archives
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            godot-mcp-server-*.tgz
+            checksums.txt

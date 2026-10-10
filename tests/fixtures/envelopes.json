@@ -1,0 +1,492 @@
+{
+  "get_scene_tree": {
+    "outbound": { "id": "t5-get-scene-tree", "command": "get_scene_tree", "params": { "max_depth": 2 } },
+    "successInbound": { "id": "t5-get-scene-tree", "status": "success", "result": { "tree": { "name": "Main", "type": "Node2D" } } },
+    "errorInbound": { "id": "t5-get-scene-tree", "status": "error", "error": { "code": "NO_SCENE", "message": "No scene is currently open" } }
+  },
+  "open_scene": {
+    "outbound": { "id": "t5-open-scene", "command": "open_scene", "params": { "scene_path": "res://main.tscn" } },
+    "successInbound": { "id": "t5-open-scene", "status": "success", "result": { "path": "res://main.tscn" } },
+    "errorInbound": { "id": "t5-open-scene", "status": "error", "error": { "code": "FILE_NOT_FOUND", "message": "Scene file not found: res://missing.tscn" } }
+  },
+  "save_scene": {
+    "outbound": { "id": "t5-save-scene", "command": "save_scene", "params": {} },
+    "successInbound": { "id": "t5-save-scene", "status": "success", "result": { "path": "res://main.tscn" } },
+    "errorInbound": { "id": "t5-save-scene", "status": "error", "error": { "code": "NO_SCENE", "message": "No scene is currently open" } }
+  },
+  "reload_scene": {
+    "outbound": { "id": "t5-reload-scene", "command": "reload_scene", "params": { "scene_path": "res://main.tscn" } },
+    "successInbound": { "id": "t5-reload-scene", "status": "success", "result": { "path": "res://main.tscn" } },
+    "errorInbound": { "id": "t5-reload-scene", "status": "error", "error": { "code": "NOT_OPEN", "message": "Scene is not open in the editor; use open_scene to open it: res://main.tscn" } }
+  },
+  "get_node_properties": {
+    "outbound": { "id": "t5-get-node-props", "command": "get_node_properties", "params": { "node_path": "/root/Main/Player" } },
+    "successInbound": { "id": "t5-get-node-props", "status": "success", "result": { "properties": { "position": { "x": 1, "y": 2 } } } },
+    "errorInbound": { "id": "t5-get-node-props", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Player" } }
+  },
+  "find_nodes": {
+    "outbound": { "id": "t5-find-nodes", "command": "find_nodes", "params": { "name_pattern": "Player*" } },
+    "successInbound": { "id": "t5-find-nodes", "status": "success", "result": { "matches": [{ "path": "/root/Main/Player", "type": "CharacterBody2D" }], "count": 1 } },
+    "errorInbound": { "id": "t5-find-nodes", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "At least one of name_pattern or type is required" } }
+  },
+  "update_node": {
+    "outbound": { "id": "t5-update-node", "command": "update_node", "params": { "node_path": "/root/Main/Player", "properties": { "position": { "x": 3, "y": 4 } } } },
+    "successInbound": { "id": "t5-update-node", "status": "success", "result": {} },
+    "errorInbound": { "id": "t5-update-node", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Player" } }
+  },
+  "reparent_node": {
+    "outbound": { "id": "t5-reparent-node", "command": "reparent_node", "params": { "node_path": "/root/Main/Player", "new_parent_path": "/root/Main/Team" } },
+    "successInbound": { "id": "t5-reparent-node", "status": "success", "result": { "new_path": "Team/Player" } },
+    "errorInbound": { "id": "t5-reparent-node", "status": "error", "error": { "code": "CANNOT_REPARENT_ROOT", "message": "Cannot reparent the root node" } }
+  },
+  "get_editor_state": {
+    "outbound": { "id": "t5-editor-state", "command": "get_editor_state", "params": {} },
+    "successInbound": { "id": "t5-editor-state", "status": "success", "result": { "current_scene": "res://main.tscn", "is_playing": false, "main_screen": "2D" } },
+    "errorInbound": { "id": "t5-editor-state", "status": "error", "error": { "code": "PARSE_ERROR", "message": "unparseable frame" } }
+  },
+  "get_selected_nodes": {
+    "outbound": { "id": "t5-selected-nodes", "command": "get_selected_nodes", "params": {} },
+    "successInbound": { "id": "t5-selected-nodes", "status": "success", "result": { "selected": ["/root/Main/Player"] } },
+    "errorInbound": { "id": "t5-selected-nodes", "status": "error", "error": { "code": "INVALID_FORMAT", "message": "missing field status" } }
+  },
+  "select_node": {
+    "outbound": { "id": "t5-select-node", "command": "select_node", "params": { "node_path": "/root/Main/Player" } },
+    "successInbound": { "id": "t5-select-node", "status": "success", "result": {} },
+    "errorInbound": { "id": "t5-select-node", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Player" } }
+  },
+  "set_2d_viewport": {
+    "outbound": { "id": "t5-2d-viewport", "command": "set_2d_viewport", "params": { "center_x": 100, "center_y": 200, "zoom": 2 } },
+    "successInbound": { "id": "t5-2d-viewport", "status": "success", "result": { "center": { "x": 100, "y": 200 }, "zoom": 2 } },
+    "errorInbound": { "id": "t5-2d-viewport", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "zoom must be positive" } }
+  },
+  "get_project_info": {
+    "outbound": { "id": "t5-project-info", "command": "get_project_info", "params": {} },
+    "successInbound": { "id": "t5-project-info", "status": "success", "result": { "name": "infinity-mu", "godot_version": "4.7.2" } },
+    "errorInbound": { "id": "t5-project-info", "status": "error", "error": { "code": "UNKNOWN_COMMAND", "message": "unknown command get_project_info" } }
+  },
+  "get_project_settings": {
+    "outbound": { "id": "t5-project-settings", "command": "get_project_settings", "params": { "category": "application/config" } },
+    "successInbound": { "id": "t5-project-settings", "status": "success", "result": { "settings": { "application/config/name": "infinity-mu" } } },
+    "errorInbound": { "id": "t5-project-settings", "status": "error", "error": { "code": "ALREADY_CONNECTED", "message": "bridge occupied" } }
+  },
+  "get_project_staleness": {
+    "outbound": { "id": "t5-project-staleness", "command": "get_project_staleness", "params": {} },
+    "successInbound": { "id": "t5-project-staleness", "status": "success", "result": { "stale": false } },
+    "errorInbound": { "id": "t5-project-staleness", "status": "error", "error": { "code": "PARSE_ERROR", "message": "unparseable frame" } }
+  },
+  "run_project": {
+    "outbound": { "id": "t6-run-project", "command": "run_project", "params": { "frozen": true } },
+    "successInbound": { "id": "t6-run-project", "status": "success", "result": { "frozen": false } },
+    "errorInbound": { "id": "t6-run-project", "status": "error", "error": { "code": "NO_MAIN_SCENE", "message": "application/run/main_scene is not set" } }
+  },
+  "stop_project": {
+    "outbound": { "id": "t6-stop-project", "command": "stop_project", "params": {} },
+    "successInbound": { "id": "t6-stop-project", "status": "success", "result": {} },
+    "errorInbound": { "id": "t6-stop-project", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "get_log_messages": {
+    "outbound": { "id": "t6-log-messages", "command": "get_log_messages", "params": { "limit": 20, "severity": "errors" } },
+    "successInbound": { "id": "t6-log-messages", "status": "success", "result": { "messages": [], "count": 0 } },
+    "errorInbound": { "id": "t6-log-messages", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "limit must be positive" } }
+  },
+  "get_stack_trace": {
+    "outbound": { "id": "t6-stack-trace", "command": "get_stack_trace", "params": {} },
+    "successInbound": { "id": "t6-stack-trace", "status": "success", "result": { "error": "", "frames": [] } },
+    "errorInbound": { "id": "t6-stack-trace", "status": "error", "error": { "code": "NO_ERROR", "message": "No error recorded" } }
+  },
+  "capture_game_screenshot": {
+    "outbound": { "id": "t6-game-screenshot", "command": "capture_game_screenshot", "params": { "max_width": 1280, "format": "png" } },
+    "successInbound": { "id": "t6-game-screenshot", "status": "success", "result": { "image_base64": "iVBOR", "width": 1280, "height": 720 } },
+    "errorInbound": { "id": "t6-game-screenshot", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running. Use run_project first." } }
+  },
+  "capture_editor_screenshot": {
+    "outbound": { "id": "t6-editor-screenshot", "command": "capture_editor_screenshot", "params": { "max_width": 640, "format": "png" } },
+    "successInbound": { "id": "t6-editor-screenshot", "status": "success", "result": { "image_base64": "iVBOR", "width": 640, "height": 360 } },
+    "errorInbound": { "id": "t6-editor-screenshot", "status": "error", "error": { "code": "NO_VIEWPORT", "message": "Could not find editor viewport" } }
+  },
+  "get_resource_info": {
+    "outbound": { "id": "t6-resource-info", "command": "get_resource_info", "params": { "resource_path": "res://icon.svg" } },
+    "successInbound": { "id": "t6-resource-info", "status": "success", "result": { "resource_path": "res://icon.svg", "resource_type": "Texture2D" } },
+    "errorInbound": { "id": "t6-resource-info", "status": "error", "error": { "code": "RESOURCE_NOT_FOUND", "message": "Resource not found: res://icon.svg" } }
+  },
+  "get_spatial_info": {
+    "outbound": { "id": "t6-spatial-info", "command": "get_spatial_info", "params": { "node_path": "/root/Main", "include_children": true } },
+    "successInbound": { "id": "t6-spatial-info", "status": "success", "result": { "nodes": [], "count": 0 } },
+    "errorInbound": { "id": "t6-spatial-info", "status": "error", "error": { "code": "NOT_NODE3D", "message": "Node is not a Node3D: /root/Main" } }
+  },
+  "get_scene_bounds": {
+    "outbound": { "id": "t6-scene-bounds", "command": "get_scene_bounds", "params": {} },
+    "successInbound": { "id": "t6-scene-bounds", "status": "success", "result": { "count": 3 } },
+    "errorInbound": { "id": "t6-scene-bounds", "status": "error", "error": { "code": "NO_GEOMETRY", "message": "No VisualInstance3D or populated GridMap nodes found" } }
+  },
+  "get_input_map": {
+    "outbound": { "id": "t6-input-map", "command": "get_input_map", "params": {} },
+    "successInbound": { "id": "t6-input-map", "status": "success", "result": { "actions": [], "source": "project" } },
+    "errorInbound": { "id": "t6-input-map", "status": "error", "error": { "code": "NO_SESSION", "message": "No active debug session" } }
+  },
+  "execute_input_sequence": {
+    "outbound": { "id": "t6-input-sequence", "command": "execute_input_sequence", "params": { "inputs": [{ "action": "ui_accept", "start_ms": 0 }] } },
+    "successInbound": { "id": "t6-input-sequence", "status": "success", "result": { "completed": true } },
+    "errorInbound": { "id": "t6-input-sequence", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "type_text": {
+    "outbound": { "id": "t6-type-text", "command": "type_text", "params": { "text": "hello" } },
+    "successInbound": { "id": "t6-type-text", "status": "success", "result": { "typed": 5 } },
+    "errorInbound": { "id": "t6-type-text", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "text is required and must not be empty" } }
+  },
+  "list_animation_players": {
+    "outbound": { "id": "t7a-list-animation-players", "command": "list_animation_players", "params": {} },
+    "successInbound": { "id": "t7a-list-animation-players", "status": "success", "result": {"animation_players": ["/root/Main/AnimationPlayer"]} },
+    "errorInbound": { "id": "t7a-list-animation-players", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Root node not found" } }
+  },
+  "get_animation_player_info": {
+    "outbound": { "id": "t7a-get-animation-player-info", "command": "get_animation_player_info", "params": {"node_path": "/root/Main/AnimationPlayer"} },
+    "successInbound": { "id": "t7a-get-animation-player-info", "status": "success", "result": {"animations": ["walk"]} },
+    "errorInbound": { "id": "t7a-get-animation-player-info", "status": "error", "error": { "code": "NOT_ANIMATION_PLAYER", "message": "Node is not an AnimationPlayer: /root/Main" } }
+  },
+  "get_animation_details": {
+    "outbound": { "id": "t7a-get-animation-details", "command": "get_animation_details", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk"} },
+    "successInbound": { "id": "t7a-get-animation-details", "status": "success", "result": {"length": 1.0} },
+    "errorInbound": { "id": "t7a-get-animation-details", "status": "error", "error": { "code": "ANIMATION_NOT_FOUND", "message": "Animation not found: run" } }
+  },
+  "get_track_keyframes": {
+    "outbound": { "id": "t7a-get-track-keyframes", "command": "get_track_keyframes", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk", "track_index": 0} },
+    "successInbound": { "id": "t7a-get-track-keyframes", "status": "success", "result": {"keys": []} },
+    "errorInbound": { "id": "t7a-get-track-keyframes", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "track_index is required" } }
+  },
+  "play_animation": {
+    "outbound": { "id": "t7a-play-animation", "command": "play_animation", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk"} },
+    "successInbound": { "id": "t7a-play-animation", "status": "success", "result": {"playing": "walk"} },
+    "errorInbound": { "id": "t7a-play-animation", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "stop_animation": {
+    "outbound": { "id": "t7a-stop-animation", "command": "stop_animation", "params": {"node_path": "/root/Main/AnimationPlayer"} },
+    "successInbound": { "id": "t7a-stop-animation", "status": "success", "result": {"stopped": true} },
+    "errorInbound": { "id": "t7a-stop-animation", "status": "error", "error": { "code": "NOT_ANIMATION_PLAYER", "message": "Node is not an AnimationPlayer: /root/Main" } }
+  },
+  "seek_animation": {
+    "outbound": { "id": "t7a-seek-animation", "command": "seek_animation", "params": {"node_path": "/root/Main/AnimationPlayer", "seconds": 0.5} },
+    "successInbound": { "id": "t7a-seek-animation", "status": "success", "result": {"position": 0.5} },
+    "errorInbound": { "id": "t7a-seek-animation", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "seconds is required" } }
+  },
+  "create_animation": {
+    "outbound": { "id": "t7a-create-animation", "command": "create_animation", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "jump"} },
+    "successInbound": { "id": "t7a-create-animation", "status": "success", "result": {"created": "jump"} },
+    "errorInbound": { "id": "t7a-create-animation", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "node_path is required" } }
+  },
+  "delete_animation": {
+    "outbound": { "id": "t7a-delete-animation", "command": "delete_animation", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "jump"} },
+    "successInbound": { "id": "t7a-delete-animation", "status": "success", "result": {"deleted": "jump"} },
+    "errorInbound": { "id": "t7a-delete-animation", "status": "error", "error": { "code": "ANIMATION_NOT_FOUND", "message": "Animation not found: jump" } }
+  },
+  "update_animation_properties": {
+    "outbound": { "id": "t7a-update-animation-properties", "command": "update_animation_properties", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk", "length": 2.0} },
+    "successInbound": { "id": "t7a-update-animation-properties", "status": "success", "result": {"updated": "walk"} },
+    "errorInbound": { "id": "t7a-update-animation-properties", "status": "error", "error": { "code": "ANIMATION_NOT_FOUND", "message": "Animation not found: walk" } }
+  },
+  "add_animation_track": {
+    "outbound": { "id": "t7a-add-animation-track", "command": "add_animation_track", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk", "track_type": "value", "track_path": "Sprite2D:position"} },
+    "successInbound": { "id": "t7a-add-animation-track", "status": "success", "result": {"track_index": 3} },
+    "errorInbound": { "id": "t7a-add-animation-track", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "track_type is required" } }
+  },
+  "remove_animation_track": {
+    "outbound": { "id": "t7a-remove-animation-track", "command": "remove_animation_track", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk", "track_index": 3} },
+    "successInbound": { "id": "t7a-remove-animation-track", "status": "success", "result": {"removed": 3} },
+    "errorInbound": { "id": "t7a-remove-animation-track", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "track_index is required" } }
+  },
+  "add_keyframe": {
+    "outbound": { "id": "t7a-add-keyframe", "command": "add_keyframe", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk", "track_index": 0, "time": 0.0, "value": 1} },
+    "successInbound": { "id": "t7a-add-keyframe", "status": "success", "result": {"keyframe_index": 0} },
+    "errorInbound": { "id": "t7a-add-keyframe", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "value is required" } }
+  },
+  "create_reset_keys": {
+    "outbound": { "id": "t7a-create-reset-keys", "command": "create_reset_keys", "params": {"node_path": "/root/Main/AnimationPlayer"} },
+    "successInbound": { "id": "t7a-create-reset-keys", "status": "success", "result": {"added": [], "skipped": []} },
+    "errorInbound": { "id": "t7a-create-reset-keys", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Missing" } }
+  },
+  "remove_keyframe": {
+    "outbound": { "id": "t7a-remove-keyframe", "command": "remove_keyframe", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk", "track_index": 0, "keyframe_index": 0} },
+    "successInbound": { "id": "t7a-remove-keyframe", "status": "success", "result": {"removed": 0} },
+    "errorInbound": { "id": "t7a-remove-keyframe", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "keyframe_index is required" } }
+  },
+  "update_keyframe": {
+    "outbound": { "id": "t7a-update-keyframe", "command": "update_keyframe", "params": {"node_path": "/root/Main/AnimationPlayer", "animation_name": "walk", "track_index": 0, "keyframe_index": 0, "time": 1.0} },
+    "successInbound": { "id": "t7a-update-keyframe", "status": "success", "result": {"updated": 0} },
+    "errorInbound": { "id": "t7a-update-keyframe", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "keyframe_index is required" } }
+  },
+  "list_tilemap_layers": {
+    "outbound": { "id": "t7a-list-tilemap-layers", "command": "list_tilemap_layers", "params": {} },
+    "successInbound": { "id": "t7a-list-tilemap-layers", "status": "success", "result": {"layers": ["/root/Main/Ground"]} },
+    "errorInbound": { "id": "t7a-list-tilemap-layers", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Root node not found" } }
+  },
+  "get_tilemap_layer_info": {
+    "outbound": { "id": "t7a-get-tilemap-layer-info", "command": "get_tilemap_layer_info", "params": {"node_path": "/root/Main/Ground"} },
+    "successInbound": { "id": "t7a-get-tilemap-layer-info", "status": "success", "result": {"cell_size": {"x": 16, "y": 16}} },
+    "errorInbound": { "id": "t7a-get-tilemap-layer-info", "status": "error", "error": { "code": "NOT_TILEMAP_LAYER", "message": "Node is not a TileMapLayer: /root/Main" } }
+  },
+  "get_tileset_info": {
+    "outbound": { "id": "t7a-get-tileset-info", "command": "get_tileset_info", "params": {"node_path": "/root/Main/Ground"} },
+    "successInbound": { "id": "t7a-get-tileset-info", "status": "success", "result": {"source_count": 1} },
+    "errorInbound": { "id": "t7a-get-tileset-info", "status": "error", "error": { "code": "NO_TILESET", "message": "TileMapLayer has no TileSet assigned" } }
+  },
+  "get_used_cells": {
+    "outbound": { "id": "t7a-get-used-cells", "command": "get_used_cells", "params": {"node_path": "/root/Main/Ground"} },
+    "successInbound": { "id": "t7a-get-used-cells", "status": "success", "result": {"count": 4} },
+    "errorInbound": { "id": "t7a-get-used-cells", "status": "error", "error": { "code": "NOT_TILEMAP_LAYER", "message": "Node is not a TileMapLayer: /root/Main" } }
+  },
+  "get_cell": {
+    "outbound": { "id": "t7a-get-cell", "command": "get_cell", "params": {"node_path": "/root/Main/Ground", "coords": {"x": 1, "y": 2}} },
+    "successInbound": { "id": "t7a-get-cell", "status": "success", "result": {"source_id": 0} },
+    "errorInbound": { "id": "t7a-get-cell", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "coords is required" } }
+  },
+  "set_cell": {
+    "outbound": { "id": "t7a-set-cell", "command": "set_cell", "params": {"node_path": "/root/Main/Ground", "coords": {"x": 1, "y": 2}, "source_id": 0} },
+    "successInbound": { "id": "t7a-set-cell", "status": "success", "result": {"source_id": 0} },
+    "errorInbound": { "id": "t7a-set-cell", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Missing" } }
+  },
+  "erase_cell": {
+    "outbound": { "id": "t7a-erase-cell", "command": "erase_cell", "params": {"node_path": "/root/Main/Ground", "coords": {"x": 1, "y": 2}} },
+    "successInbound": { "id": "t7a-erase-cell", "status": "success", "result": {"erased": {"x": 1, "y": 2}} },
+    "errorInbound": { "id": "t7a-erase-cell", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Missing" } }
+  },
+  "clear_layer": {
+    "outbound": { "id": "t7a-clear-layer", "command": "clear_layer", "params": {"node_path": "/root/Main/Ground"} },
+    "successInbound": { "id": "t7a-clear-layer", "status": "success", "result": {"cleared": true} },
+    "errorInbound": { "id": "t7a-clear-layer", "status": "error", "error": { "code": "NOT_TILEMAP_LAYER", "message": "Node is not a TileMapLayer: /root/Main" } }
+  },
+  "get_cells_in_region": {
+    "outbound": { "id": "t7a-get-cells-in-region", "command": "get_cells_in_region", "params": {"node_path": "/root/Main/Ground", "min_coords": {"x": 0, "y": 0}, "max_coords": {"x": 4, "y": 4}} },
+    "successInbound": { "id": "t7a-get-cells-in-region", "status": "success", "result": {"count": 2} },
+    "errorInbound": { "id": "t7a-get-cells-in-region", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "min_coords is required" } }
+  },
+  "set_cells_batch": {
+    "outbound": { "id": "t7a-set-cells-batch", "command": "set_cells_batch", "params": {"node_path": "/root/Main/Ground", "cells": [{"coords": {"x": 0, "y": 0}}]} },
+    "successInbound": { "id": "t7a-set-cells-batch", "status": "success", "result": {"cells_set": 1} },
+    "errorInbound": { "id": "t7a-set-cells-batch", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "cells is required" } }
+  },
+  "convert_coords": {
+    "outbound": { "id": "t7a-convert-coords", "command": "convert_coords", "params": {"node_path": "/root/Main/Ground", "map_coords": {"x": 1, "y": 2}} },
+    "successInbound": { "id": "t7a-convert-coords", "status": "success", "result": {"direction": "map_to_local"} },
+    "errorInbound": { "id": "t7a-convert-coords", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "Either local_position or map_coords is required" } }
+  },
+  "list_gridmaps": {
+    "outbound": { "id": "t7a-list-gridmaps", "command": "list_gridmaps", "params": {} },
+    "successInbound": { "id": "t7a-list-gridmaps", "status": "success", "result": {"gridmaps": []} },
+    "errorInbound": { "id": "t7a-list-gridmaps", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Root node not found" } }
+  },
+  "get_gridmap_info": {
+    "outbound": { "id": "t7a-get-gridmap-info", "command": "get_gridmap_info", "params": {"node_path": "/root/Main/Grid"} },
+    "successInbound": { "id": "t7a-get-gridmap-info", "status": "success", "result": {"cell_size": 1.0} },
+    "errorInbound": { "id": "t7a-get-gridmap-info", "status": "error", "error": { "code": "NOT_GRIDMAP", "message": "Node is not a GridMap: /root/Main" } }
+  },
+  "get_meshlib_info": {
+    "outbound": { "id": "t7a-get-meshlib-info", "command": "get_meshlib_info", "params": {"node_path": "/root/Main/Grid"} },
+    "successInbound": { "id": "t7a-get-meshlib-info", "status": "success", "result": {"item_count": 2} },
+    "errorInbound": { "id": "t7a-get-meshlib-info", "status": "error", "error": { "code": "NO_MESH_LIBRARY", "message": "GridMap has no MeshLibrary assigned" } }
+  },
+  "get_gridmap_used_cells": {
+    "outbound": { "id": "t7a-get-gridmap-used-cells", "command": "get_gridmap_used_cells", "params": {"node_path": "/root/Main/Grid"} },
+    "successInbound": { "id": "t7a-get-gridmap-used-cells", "status": "success", "result": {"count": 3} },
+    "errorInbound": { "id": "t7a-get-gridmap-used-cells", "status": "error", "error": { "code": "NOT_GRIDMAP", "message": "Node is not a GridMap: /root/Main" } }
+  },
+  "get_gridmap_cell": {
+    "outbound": { "id": "t7a-get-gridmap-cell", "command": "get_gridmap_cell", "params": {"node_path": "/root/Main/Grid", "coords": {"x": 0, "y": 0, "z": 0}} },
+    "successInbound": { "id": "t7a-get-gridmap-cell", "status": "success", "result": {"item": 1} },
+    "errorInbound": { "id": "t7a-get-gridmap-cell", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "coords is required" } }
+  },
+  "set_gridmap_cell": {
+    "outbound": { "id": "t7a-set-gridmap-cell", "command": "set_gridmap_cell", "params": {"node_path": "/root/Main/Grid", "coords": {"x": 0, "y": 0, "z": 0}, "item": 1} },
+    "successInbound": { "id": "t7a-set-gridmap-cell", "status": "success", "result": {"item": 1} },
+    "errorInbound": { "id": "t7a-set-gridmap-cell", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "item is required" } }
+  },
+  "clear_gridmap_cell": {
+    "outbound": { "id": "t7a-clear-gridmap-cell", "command": "clear_gridmap_cell", "params": {"node_path": "/root/Main/Grid", "coords": {"x": 0, "y": 0, "z": 0}} },
+    "successInbound": { "id": "t7a-clear-gridmap-cell", "status": "success", "result": {"cleared": true} },
+    "errorInbound": { "id": "t7a-clear-gridmap-cell", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Missing" } }
+  },
+  "clear_gridmap": {
+    "outbound": { "id": "t7a-clear-gridmap", "command": "clear_gridmap", "params": {"node_path": "/root/Main/Grid"} },
+    "successInbound": { "id": "t7a-clear-gridmap", "status": "success", "result": {"cleared": true} },
+    "errorInbound": { "id": "t7a-clear-gridmap", "status": "error", "error": { "code": "NOT_GRIDMAP", "message": "Node is not a GridMap: /root/Main" } }
+  },
+  "get_cells_by_item": {
+    "outbound": { "id": "t7a-get-cells-by-item", "command": "get_cells_by_item", "params": {"node_path": "/root/Main/Grid", "item": 1} },
+    "successInbound": { "id": "t7a-get-cells-by-item", "status": "success", "result": {"count": 2} },
+    "errorInbound": { "id": "t7a-get-cells-by-item", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "item is required" } }
+  },
+  "set_gridmap_cells_batch": {
+    "outbound": { "id": "t7a-set-gridmap-cells-batch", "command": "set_gridmap_cells_batch", "params": {"node_path": "/root/Main/Grid", "cells": [{"coords": {"x": 0, "y": 0, "z": 0}, "item": 1}]} },
+    "successInbound": { "id": "t7a-set-gridmap-cells-batch", "status": "success", "result": {"cells_set": 1} },
+    "errorInbound": { "id": "t7a-set-gridmap-cells-batch", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "cells is required" } }
+  },
+  "get_performance_metrics": {
+    "outbound": { "id": "t7b-get-performance-metrics", "command": "get_performance_metrics", "params": {} },
+    "successInbound": { "id": "t7b-get-performance-metrics", "status": "success", "result": {"fps": 60} },
+    "errorInbound": { "id": "t7b-get-performance-metrics", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "start_profiler": {
+    "outbound": { "id": "t7b-start-profiler", "command": "start_profiler", "params": {} },
+    "successInbound": { "id": "t7b-start-profiler", "status": "success", "result": {"message": "Frame profiler started"} },
+    "errorInbound": { "id": "t7b-start-profiler", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "stop_profiler": {
+    "outbound": { "id": "t7b-stop-profiler", "command": "stop_profiler", "params": {} },
+    "successInbound": { "id": "t7b-stop-profiler", "status": "success", "result": {"message": "Frame profiler stopped"} },
+    "errorInbound": { "id": "t7b-stop-profiler", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "get_profiler_data": {
+    "outbound": { "id": "t7b-get-profiler-data", "command": "get_profiler_data", "params": {} },
+    "successInbound": { "id": "t7b-get-profiler-data", "status": "success", "result": {"frames": []} },
+    "errorInbound": { "id": "t7b-get-profiler-data", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "get_active_processes": {
+    "outbound": { "id": "t7b-get-active-processes", "command": "get_active_processes", "params": {} },
+    "successInbound": { "id": "t7b-get-active-processes", "status": "success", "result": {"processes": []} },
+    "errorInbound": { "id": "t7b-get-active-processes", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "get_signal_connections": {
+    "outbound": { "id": "t7b-get-signal-connections", "command": "get_signal_connections", "params": {"node_path": "/root/Main/Button"} },
+    "successInbound": { "id": "t7b-get-signal-connections", "status": "success", "result": {"connections": []} },
+    "errorInbound": { "id": "t7b-get-signal-connections", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "get_runtime_state": {
+    "outbound": { "id": "t7b-get-runtime-state", "command": "get_runtime_state", "params": {"group": "mcp_watch"} },
+    "successInbound": { "id": "t7b-get-runtime-state", "status": "success", "result": {"nodes": []} },
+    "errorInbound": { "id": "t7b-get-runtime-state", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "watch_start": {
+    "outbound": { "id": "t7b-watch-start", "command": "watch_start", "params": {"hz": 20, "duration_ms": 1000} },
+    "successInbound": { "id": "t7b-watch-start", "status": "success", "result": {"started": true} },
+    "errorInbound": { "id": "t7b-watch-start", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "watch_collect": {
+    "outbound": { "id": "t7b-watch-collect", "command": "watch_collect", "params": {} },
+    "successInbound": { "id": "t7b-watch-collect", "status": "success", "result": {"samples": []} },
+    "errorInbound": { "id": "t7b-watch-collect", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "watch_stop": {
+    "outbound": { "id": "t7b-watch-stop", "command": "watch_stop", "params": {} },
+    "successInbound": { "id": "t7b-watch-stop", "status": "success", "result": {"stopped": true} },
+    "errorInbound": { "id": "t7b-watch-stop", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "game_time_freeze": {
+    "outbound": { "id": "t7b-game-time-freeze", "command": "game_time_freeze", "params": {} },
+    "successInbound": { "id": "t7b-game-time-freeze", "status": "success", "result": {"frozen": true} },
+    "errorInbound": { "id": "t7b-game-time-freeze", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "game_time_step": {
+    "outbound": { "id": "t7b-game-time-step", "command": "game_time_step", "params": {"frames": 5} },
+    "successInbound": { "id": "t7b-game-time-step", "status": "success", "result": {"frames": 5} },
+    "errorInbound": { "id": "t7b-game-time-step", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "game_time_step_until": {
+    "outbound": { "id": "t7b-game-time-step-until", "command": "game_time_step_until", "params": {"until": "frozen == false", "max_ms": 5000} },
+    "successInbound": { "id": "t7b-game-time-step-until", "status": "success", "result": {"met": true} },
+    "errorInbound": { "id": "t7b-game-time-step-until", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "game_time_thaw": {
+    "outbound": { "id": "t7b-game-time-thaw", "command": "game_time_thaw", "params": {} },
+    "successInbound": { "id": "t7b-game-time-thaw", "status": "success", "result": {"frozen": false} },
+    "errorInbound": { "id": "t7b-game-time-thaw", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "game_time_status": {
+    "outbound": { "id": "t7b-game-time-status", "command": "game_time_status", "params": {} },
+    "successInbound": { "id": "t7b-game-time-status", "status": "success", "result": {"frozen": false, "frames": 0} },
+    "errorInbound": { "id": "t7b-game-time-status", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "exec_run": {
+    "outbound": { "id": "t7b-exec-run", "command": "exec_run", "params": {"source": "return 1 + 1"} },
+    "successInbound": { "id": "t7b-exec-run", "status": "success", "result": {"completed": true, "result": 2} },
+    "errorInbound": { "id": "t7b-exec-run", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "exec_list": {
+    "outbound": { "id": "t7b-exec-list", "command": "exec_list", "params": {} },
+    "successInbound": { "id": "t7b-exec-list", "status": "success", "result": {"nodes": [], "count": 0} },
+    "errorInbound": { "id": "t7b-exec-list", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "exec_remove": {
+    "outbound": { "id": "t7b-exec-remove", "command": "exec_remove", "params": {"name": "probe"} },
+    "successInbound": { "id": "t7b-exec-remove", "status": "success", "result": {"removed": true} },
+    "errorInbound": { "id": "t7b-exec-remove", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "exec_clear": {
+    "outbound": { "id": "t7b-exec-clear", "command": "exec_clear", "params": {} },
+    "successInbound": { "id": "t7b-exec-clear", "status": "success", "result": {"cleared": true} },
+    "errorInbound": { "id": "t7b-exec-clear", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "validate_meshes": {
+    "outbound": { "id": "t7b-validate-meshes", "command": "validate_meshes", "params": {"max_findings": 25} },
+    "successInbound": { "id": "t7b-validate-meshes", "status": "success", "result": {"total": 0} },
+    "errorInbound": { "id": "t7b-validate-meshes", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "class_list": {
+    "outbound": { "id": "t8-class-list", "command": "class_list", "params": {"parent": "Node", "limit": 200} },
+    "successInbound": { "id": "t8-class-list", "status": "success", "result": {"classes": [{"name": "Node3D", "parent": "Node", "is_editor_class": false}], "truncated": false} },
+    "errorInbound": { "id": "t8-class-list", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "limit must be a positive integer" } }
+  },
+  "class_describe": {
+    "outbound": { "id": "t8-class-describe", "command": "class_describe", "params": {"class_name": "Node3D", "detail": "brief"} },
+    "successInbound": { "id": "t8-class-describe", "status": "success", "result": {"name": "Node3D", "parent": "Node", "properties": [], "methods": [], "signals": []} },
+    "errorInbound": { "id": "t8-class-describe", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "class_name is required and must not be empty" } }
+  },
+  "signals_of": {
+    "outbound": { "id": "t8-signals-of", "command": "signals_of", "params": {"class_name": "Button"} },
+    "successInbound": { "id": "t8-signals-of", "status": "success", "result": {"class_name": "Button", "signals": [{"name": "pressed", "args": []}]} },
+    "errorInbound": { "id": "t8-signals-of", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "class_name is required and must not be empty" } }
+  },
+  "create_node": {
+    "outbound": { "id": "t8-create-node", "command": "create_node", "params": {"parent_path": "/root/Main", "class_name": "Node3D", "name": "Enemy", "owner_to_scene": true} },
+    "successInbound": { "id": "t8-create-node", "status": "success", "result": {"node_path": "/root/Main/Enemy", "class_name": "Node3D"} },
+    "errorInbound": { "id": "t8-create-node", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "parent_path is required and must not be empty" } }
+  },
+  "instantiate_scene": {
+    "outbound": { "id": "t8-instantiate-scene", "command": "instantiate_scene", "params": {"parent_path": "/root/Main", "scene_path": "res://enemy.tscn", "owner_to_scene": true} },
+    "successInbound": { "id": "t8-instantiate-scene", "status": "success", "result": {"node_path": "/root/Main/Enemy", "scene_path": "res://enemy.tscn"} },
+    "errorInbound": { "id": "t8-instantiate-scene", "status": "error", "error": { "code": "FILE_NOT_FOUND", "message": "Scene file not found: res://missing.tscn" } }
+  },
+  "duplicate_node": {
+    "outbound": { "id": "t8-duplicate-node", "command": "duplicate_node", "params": {"node_path": "/root/Main/Enemy"} },
+    "successInbound": { "id": "t8-duplicate-node", "status": "success", "result": {"node_path": "/root/Main/Enemy2", "source": "/root/Main/Enemy"} },
+    "errorInbound": { "id": "t8-duplicate-node", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Enemy" } }
+  },
+  "delete_node": {
+    "outbound": { "id": "t8-delete-node", "command": "delete_node", "params": {"node_path": "/root/Main/Enemy", "confirm_name": "Enemy"} },
+    "successInbound": { "id": "t8-delete-node", "status": "success", "result": {"deleted": true, "node_path": "/root/Main/Enemy"} },
+    "errorInbound": { "id": "t8-delete-node", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Enemy" } }
+  },
+  "connect_signal": {
+    "outbound": { "id": "t9-connect-signal", "command": "connect_signal", "params": {"node_path": "/root/Main/Button", "signal": "pressed", "target_path": "/root/Main", "method": "_on_button_pressed", "binds": []} },
+    "successInbound": { "id": "t9-connect-signal", "status": "success", "result": {"connected": true} },
+    "errorInbound": { "id": "t9-connect-signal", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "method is required" } }
+  },
+  "disconnect_signal": {
+    "outbound": { "id": "t9-disconnect-signal", "command": "disconnect_signal", "params": {"node_path": "/root/Main/Button", "signal": "pressed", "target_path": "/root/Main", "method": "_on_button_pressed"} },
+    "successInbound": { "id": "t9-disconnect-signal", "status": "success", "result": {"disconnected": true} },
+    "errorInbound": { "id": "t9-disconnect-signal", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "no such connection" } }
+  },
+  "set_3d_viewport": {
+    "outbound": { "id": "t9-set-3d-viewport", "command": "set_3d_viewport", "params": {"position": {"x": 0, "y": 5, "z": 10}, "rotation": {"x": -0.5, "y": 0, "z": 0}} },
+    "successInbound": { "id": "t9-set-3d-viewport", "status": "success", "result": {"position": {"x": 0, "y": 5, "z": 10}, "rotation": {"x": -0.5, "y": 0, "z": 0}} },
+    "errorInbound": { "id": "t9-set-3d-viewport", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "position is required" } }
+  },
+  "focus_selection": {
+    "outbound": { "id": "t9-focus-selection", "command": "focus_selection", "params": {"node_paths": ["/root/Main/Player"]} },
+    "successInbound": { "id": "t9-focus-selection", "status": "success", "result": {"focused": 1} },
+    "errorInbound": { "id": "t9-focus-selection", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "node_paths must list 1..64 nodes" } }
+  },
+  "import_asset": {
+    "outbound": { "id": "t9-import-asset", "command": "import_asset", "params": {"path": "res://icon.svg", "reimport": false} },
+    "successInbound": { "id": "t9-import-asset", "status": "success", "result": {"path": "res://icon.svg", "status": "imported", "messages": []} },
+    "errorInbound": { "id": "t9-import-asset", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "path must satisfy the scope guard" } }
+  },
+  "uid_resolve": {
+    "outbound": { "id": "t9-uid-resolve", "command": "uid_resolve", "params": {"uid": "uid://b1abc2def"} },
+    "successInbound": { "id": "t9-uid-resolve", "status": "success", "result": {"uid": "uid://b1abc2def", "res_path": "res://icon.svg"} },
+    "errorInbound": { "id": "t9-uid-resolve", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "uid must match ^uid://" } }
+  },
+  "list_assets": {
+    "outbound": { "id": "t9-list-assets", "command": "list_assets", "params": {"glob": "**/*.png", "limit": 200} },
+    "successInbound": { "id": "t9-list-assets", "status": "success", "result": {"paths": ["res://icon.svg"], "truncated": false} },
+    "errorInbound": { "id": "t9-list-assets", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "glob is required" } }
+  }
+}
