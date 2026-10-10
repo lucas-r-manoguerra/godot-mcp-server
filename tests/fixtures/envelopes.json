@@ -418,5 +418,40 @@
     "outbound": { "id": "t7b-validate-meshes", "command": "validate_meshes", "params": {"max_findings": 25} },
     "successInbound": { "id": "t7b-validate-meshes", "status": "success", "result": {"total": 0} },
     "errorInbound": { "id": "t7b-validate-meshes", "status": "error", "error": { "code": "NOT_RUNNING", "message": "No game is currently running" } }
+  },
+  "class_list": {
+    "outbound": { "id": "t8-class-list", "command": "class_list", "params": {"parent": "Node", "limit": 200} },
+    "successInbound": { "id": "t8-class-list", "status": "success", "result": {"classes": [{"name": "Node3D", "parent": "Node", "is_editor_class": false}], "truncated": false} },
+    "errorInbound": { "id": "t8-class-list", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "limit must be a positive integer" } }
+  },
+  "class_describe": {
+    "outbound": { "id": "t8-class-describe", "command": "class_describe", "params": {"class_name": "Node3D", "detail": "brief"} },
+    "successInbound": { "id": "t8-class-describe", "status": "success", "result": {"name": "Node3D", "parent": "Node", "properties": [], "methods": [], "signals": []} },
+    "errorInbound": { "id": "t8-class-describe", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "class_name is required and must not be empty" } }
+  },
+  "signals_of": {
+    "outbound": { "id": "t8-signals-of", "command": "signals_of", "params": {"class_name": "Button"} },
+    "successInbound": { "id": "t8-signals-of", "status": "success", "result": {"class_name": "Button", "signals": [{"name": "pressed", "args": []}]} },
+    "errorInbound": { "id": "t8-signals-of", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "class_name is required and must not be empty" } }
+  },
+  "create_node": {
+    "outbound": { "id": "t8-create-node", "command": "create_node", "params": {"parent_path": "/root/Main", "class_name": "Node3D", "name": "Enemy", "owner_to_scene": true} },
+    "successInbound": { "id": "t8-create-node", "status": "success", "result": {"node_path": "/root/Main/Enemy", "class_name": "Node3D"} },
+    "errorInbound": { "id": "t8-create-node", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "parent_path is required and must not be empty" } }
+  },
+  "instantiate_scene": {
+    "outbound": { "id": "t8-instantiate-scene", "command": "instantiate_scene", "params": {"parent_path": "/root/Main", "scene_path": "res://enemy.tscn", "owner_to_scene": true} },
+    "successInbound": { "id": "t8-instantiate-scene", "status": "success", "result": {"node_path": "/root/Main/Enemy", "scene_path": "res://enemy.tscn"} },
+    "errorInbound": { "id": "t8-instantiate-scene", "status": "error", "error": { "code": "FILE_NOT_FOUND", "message": "Scene file not found: res://missing.tscn" } }
+  },
+  "duplicate_node": {
+    "outbound": { "id": "t8-duplicate-node", "command": "duplicate_node", "params": {"node_path": "/root/Main/Enemy"} },
+    "successInbound": { "id": "t8-duplicate-node", "status": "success", "result": {"node_path": "/root/Main/Enemy2", "source": "/root/Main/Enemy"} },
+    "errorInbound": { "id": "t8-duplicate-node", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Enemy" } }
+  },
+  "delete_node": {
+    "outbound": { "id": "t8-delete-node", "command": "delete_node", "params": {"node_path": "/root/Main/Enemy", "confirm_name": "Enemy"} },
+    "successInbound": { "id": "t8-delete-node", "status": "success", "result": {"deleted": true, "node_path": "/root/Main/Enemy"} },
+    "errorInbound": { "id": "t8-delete-node", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Enemy" } }
   }
 }

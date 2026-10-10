@@ -1,6 +1,6 @@
 // Registry contract, partial (Task 2): custom-first lookup,
 // DUPLICATE_TOOL throw, builtin unregister=false, undo gate, hints.
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   DuplicateToolError,
   ToolRegistry,
@@ -13,6 +13,8 @@ import { toolDefs as runtimeDefs } from "../src/tools/passthrough/runtime.js";
 import { toolDefs as gameTimeDefs } from "../src/tools/passthrough/gameTime.js";
 import { toolDefs as execDefs } from "../src/tools/passthrough/exec.js";
 import { toolDefs as meshesDefs } from "../src/tools/passthrough/meshes.js";
+import { toolDefs as introspectionDefs } from "../src/tools/introspection.js";
+import { toolDefs as nodeDefs } from "../src/tools/nodes.js";
 import { EXEC_DESCRIPTION_FENCE } from "../src/server/toolRegistry.js";
 
 function def(name: string, kind: ToolDef["kind"] = "custom", extra: Partial<ToolDef> = {}): ToolDef {
@@ -122,5 +124,87 @@ describe("tool registry", () => {
     for (const tool of execDefs) {
       expect(tool.description).toContain(EXEC_DESCRIPTION_FENCE);
     }
+  });
+
+  it("gap tools A register: 3 introspection reads + 4 node-lifecycle writes", () => {
+    // Spec 3.2 first half: class_list, class_describe, signals_of |
+    // create_node, instantiate_scene, duplicate_node, delete_node.
+    expect(introspectionDefs.map((tool) => tool.name)).toEqual([
+      "class_list",
+      "class_describe",
+      "signals_of",
+    ]);
+    expect(nodeDefs.map((tool) => tool.name)).toEqual([
+      "create_node",
+      "instantiate_scene",
+      "duplicate_node",
+      "delete_node",
+    ]);
+    const registry = new ToolRegistry();
+    for (const tool of [...introspectionDefs, ...nodeDefs]) {
+      expect(() => registry.register_tool(tool)).not.toThrow();
+      expect(registry.resolve(tool.name)?.kind).toBe("gap");
+    }
+  });
+
+  it("every mutating gap tool A def carries its verbatim undoAction", () => {
+    // Spec 3.2 / AC-07 named actions; the registry gate already rejects
+    // mutating gap defs without undoAction — here the exact strings.
+    const expected: Record<string, string> = {
+      create_node: "Create <Class> <name>",
+      instantiate_scene: "Instantiate <scene_file>",
+      duplicate_node: "Duplicate <name>",
+      delete_node: "Delete <name>",
+    };
+    for (const tool of nodeDefs) {
+      expect(tool.mutating).toBe(true);
+      expect(tool.undoAction).toBe(expected[tool.name]);
+    }
+    // Read-only introspection tools promise no undo action.
+    for (const tool of introspectionDefs) {
+      expect(tool.mutating ?? false).toBe(false);
+      expect(tool.undoAction).toBeUndefined();
+    }
+  });
+
+  it("delete_node confirm_name mismatch sends nothing (Zod-level guard)", () => {
+    const found = nodeDefs.find((tool) => tool.name === "delete_node");
+    if (found === undefined) throw new Error('missing toolDef "delete_node"');
+    const send = vi.fn(() => Promise.resolve({ ok: true }));
+    expect(() =>
+      found.handler(
+        { node_path: "/root/Main/Enemy", confirm_name: "Player" },
+        { send } as unknown,
+      ),
+    ).toThrowError(/confirm_name/);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("delete_node matching confirm_name sends one frame", async () => {
+    const found = nodeDefs.find((tool) => tool.name === "delete_node");
+    if (found === undefined) throw new Error('missing toolDef "delete_node"');
+    const send = vi.fn(() => Promise.resolve({ deleted: true }));
+    await found.handler(
+      { node_path: "/root/Main/Enemy", confirm_name: "Enemy" },
+      { send } as unknown,
+    );
+    expect(send).toHaveBeenCalledOnce();
+    expect(send.mock.calls[0]?.[0]).toBe("delete_node");
+    expect(send.mock.calls[0]?.[1]).toEqual({
+      node_path: "/root/Main/Enemy",
+      confirm_name: "Enemy",
+    });
+  });
+
+  it("class_list and class_describe apply their spec defaults", async () => {
+    const list = introspectionDefs.find((tool) => tool.name === "class_list");
+    const describe = introspectionDefs.find((tool) => tool.name === "class_describe");
+    if (list === undefined || describe === undefined) throw new Error("missing introspection defs");
+    const listSend = vi.fn(() => Promise.resolve({ classes: [] }));
+    await list.handler({ parent: "Node" }, { send: listSend } as unknown);
+    expect(listSend.mock.calls[0]?.[1]).toEqual({ parent: "Node", limit: 200 });
+    const describeSend = vi.fn(() => Promise.resolve({ found: false }));
+    await describe.handler({ class_name: "Nope" }, { send: describeSend } as unknown);
+    expect(describeSend.mock.calls[0]?.[1]).toEqual({ class_name: "Nope", detail: "brief" });
   });
 });
