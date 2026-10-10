@@ -15,6 +15,9 @@ import { toolDefs as execDefs } from "../src/tools/passthrough/exec.js";
 import { toolDefs as meshesDefs } from "../src/tools/passthrough/meshes.js";
 import { toolDefs as introspectionDefs } from "../src/tools/introspection.js";
 import { toolDefs as nodeDefs } from "../src/tools/nodes.js";
+import { toolDefs as signalDefs } from "../src/tools/signals.js";
+import { toolDefs as viewportDefs } from "../src/tools/viewport.js";
+import { toolDefs as assetDefs } from "../src/tools/assets.js";
 import { EXEC_DESCRIPTION_FENCE } from "../src/server/toolRegistry.js";
 
 function def(name: string, kind: ToolDef["kind"] = "custom", extra: Partial<ToolDef> = {}): ToolDef {
@@ -206,5 +209,72 @@ describe("tool registry", () => {
     const describeSend = vi.fn(() => Promise.resolve({ found: false }));
     await describe.handler({ class_name: "Nope" }, { send: describeSend } as unknown);
     expect(describeSend.mock.calls[0]?.[1]).toEqual({ class_name: "Nope", detail: "brief" });
+  });
+
+  it("gap tools B register: 3 signals + 2 viewport + 3 assets", () => {
+    // Spec 3.2 second half: connect/disconnect/trace | set_3d_viewport,
+    // focus_selection | import_asset, uid_resolve, list_assets.
+    expect(signalDefs.map((tool) => tool.name)).toEqual([
+      "connect_signal",
+      "disconnect_signal",
+      "trace_signal",
+    ]);
+    expect(viewportDefs.map((tool) => tool.name)).toEqual([
+      "set_3d_viewport",
+      "focus_selection",
+    ]);
+    expect(assetDefs.map((tool) => tool.name)).toEqual([
+      "import_asset",
+      "uid_resolve",
+      "list_assets",
+    ]);
+    const registry = new ToolRegistry();
+    for (const tool of [...signalDefs, ...viewportDefs, ...assetDefs]) {
+      expect(() => registry.register_tool(tool)).not.toThrow();
+      expect(registry.resolve(tool.name)?.kind).toBe("gap");
+    }
+  });
+
+  it("signal connect/disconnect carry verbatim undoActions; trace is extended read-only", () => {
+    const expected: Record<string, string> = {
+      connect_signal: "Connect <signal> → <method>",
+      disconnect_signal: "Disconnect <signal> → <method>",
+    };
+    for (const tool of signalDefs) {
+      if (tool.name === "trace_signal") {
+        expect(tool.mutating ?? false).toBe(false);
+        expect(tool.undoAction).toBeUndefined();
+        expect(tool.budgetClass).toBe("extended");
+      } else {
+        expect(tool.mutating).toBe(true);
+        expect(tool.undoAction).toBe(expected[tool.name]);
+      }
+    }
+    // Viewport navigation and assets: Undo N/A by rule.
+    for (const tool of [...viewportDefs, ...assetDefs]) {
+      expect(tool.mutating ?? false).toBe(false);
+      expect(tool.undoAction).toBeUndefined();
+    }
+  });
+
+  it("gap tools B apply their spec defaults before send", async () => {
+    const connect = signalDefs.find((tool) => tool.name === "connect_signal");
+    const trace = signalDefs.find((tool) => tool.name === "trace_signal");
+    const importAsset = assetDefs.find((tool) => tool.name === "import_asset");
+    const list = assetDefs.find((tool) => tool.name === "list_assets");
+    if (connect === undefined || trace === undefined) throw new Error("missing signal defs");
+    if (importAsset === undefined || list === undefined) throw new Error("missing asset defs");
+    const connectSend = vi.fn(() => Promise.resolve({ connected: true }));
+    await connect.handler(
+      { node_path: "/root/A", signal: "s", target_path: "/root/B", method: "m" },
+      { send: connectSend } as unknown,
+    );
+    expect(connectSend.mock.calls[0]?.[1]).toMatchObject({ binds: [] });
+    const importSend = vi.fn(() => Promise.resolve({ status: "imported" }));
+    await importAsset.handler({ path: "res://icon.svg" }, { send: importSend } as unknown);
+    expect(importSend.mock.calls[0]?.[1]).toEqual({ path: "res://icon.svg", reimport: false });
+    const listSend = vi.fn(() => Promise.resolve({ paths: [] }));
+    await list.handler({ glob: "**/*.png" }, { send: listSend } as unknown);
+    expect(listSend.mock.calls[0]?.[1]).toEqual({ glob: "**/*.png", limit: 200 });
   });
 });
