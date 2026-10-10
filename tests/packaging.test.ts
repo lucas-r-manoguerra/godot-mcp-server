@@ -1,5 +1,6 @@
-// Packaging gate, partial (AC-01): --help exits 0; stdio and http
-// entrypoints construct via the same buildServer factory symbol.
+// Packaging gate, full (AC-01): --help exits 0; stdio and http
+// entrypoints construct via the same buildServer factory symbol;
+// the packed artifact ships a runnable bin entrypoint.
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -49,5 +50,20 @@ describe("packaging", () => {
     expect(httpSrc).toContain('from "../server/buildServer.js"');
     const built = buildServer();
     expect(built.ctx.capabilities.server_version).toContain("godot-mcp-server/");
+  });
+
+  it("packed artifact ships a runnable bin entrypoint (clean-install half)", async () => {
+    const root = path.resolve(import.meta.dirname, "..");
+    const pkg = JSON.parse(await readFile(path.join(root, "package.json"), "utf8")) as {
+      bin?: Record<string, string>;
+      files?: string[];
+    };
+    const binTarget = pkg.bin?.["godot-mcp-server"];
+    expect(binTarget).toBe("./dist/cli.js");
+    expect(pkg.files ?? []).toContain("dist/**");
+    // The bin file must exec under node when launched through an npm
+    // .bin symlink (kernel uses the shebang, not the package.json).
+    const firstLine = (await readFile(path.join(root, "src", "cli.ts"), "utf8")).split("\n")[0];
+    expect(firstLine).toBe("#!/usr/bin/env node");
   });
 });
