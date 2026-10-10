@@ -1,0 +1,28 @@
+{
+  "name": "godot-mcp-server",
+  "version": "0.1.0",
+  "description": "Game-agnostic TypeScript MCP server bridging MCP clients and the running Godot editor",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "godot-mcp-server": "./dist/cli.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "hono": "4.13.13",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.5",
+    "typescript": "7.0.2",
+    "vitest": "5.0.3"
+  }
+}
