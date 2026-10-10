@@ -1,0 +1,77 @@
+{
+  "get_scene_tree": {
+    "outbound": { "id": "t5-get-scene-tree", "command": "get_scene_tree", "params": { "max_depth": 2 } },
+    "successInbound": { "id": "t5-get-scene-tree", "status": "success", "result": { "tree": { "name": "Main", "type": "Node2D" } } },
+    "errorInbound": { "id": "t5-get-scene-tree", "status": "error", "error": { "code": "NO_SCENE", "message": "No scene is currently open" } }
+  },
+  "open_scene": {
+    "outbound": { "id": "t5-open-scene", "command": "open_scene", "params": { "scene_path": "res://main.tscn" } },
+    "successInbound": { "id": "t5-open-scene", "status": "success", "result": { "path": "res://main.tscn" } },
+    "errorInbound": { "id": "t5-open-scene", "status": "error", "error": { "code": "FILE_NOT_FOUND", "message": "Scene file not found: res://missing.tscn" } }
+  },
+  "save_scene": {
+    "outbound": { "id": "t5-save-scene", "command": "save_scene", "params": {} },
+    "successInbound": { "id": "t5-save-scene", "status": "success", "result": { "path": "res://main.tscn" } },
+    "errorInbound": { "id": "t5-save-scene", "status": "error", "error": { "code": "NO_SCENE", "message": "No scene is currently open" } }
+  },
+  "reload_scene": {
+    "outbound": { "id": "t5-reload-scene", "command": "reload_scene", "params": { "scene_path": "res://main.tscn" } },
+    "successInbound": { "id": "t5-reload-scene", "status": "success", "result": { "path": "res://main.tscn" } },
+    "errorInbound": { "id": "t5-reload-scene", "status": "error", "error": { "code": "NOT_OPEN", "message": "Scene is not open in the editor; use open_scene to open it: res://main.tscn" } }
+  },
+  "get_node_properties": {
+    "outbound": { "id": "t5-get-node-props", "command": "get_node_properties", "params": { "node_path": "/root/Main/Player" } },
+    "successInbound": { "id": "t5-get-node-props", "status": "success", "result": { "properties": { "position": { "x": 1, "y": 2 } } } },
+    "errorInbound": { "id": "t5-get-node-props", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Player" } }
+  },
+  "find_nodes": {
+    "outbound": { "id": "t5-find-nodes", "command": "find_nodes", "params": { "name_pattern": "Player*" } },
+    "successInbound": { "id": "t5-find-nodes", "status": "success", "result": { "matches": [{ "path": "/root/Main/Player", "type": "CharacterBody2D" }], "count": 1 } },
+    "errorInbound": { "id": "t5-find-nodes", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "At least one of name_pattern or type is required" } }
+  },
+  "update_node": {
+    "outbound": { "id": "t5-update-node", "command": "update_node", "params": { "node_path": "/root/Main/Player", "properties": { "position": { "x": 3, "y": 4 } } } },
+    "successInbound": { "id": "t5-update-node", "status": "success", "result": {} },
+    "errorInbound": { "id": "t5-update-node", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Player" } }
+  },
+  "reparent_node": {
+    "outbound": { "id": "t5-reparent-node", "command": "reparent_node", "params": { "node_path": "/root/Main/Player", "new_parent_path": "/root/Main/Team" } },
+    "successInbound": { "id": "t5-reparent-node", "status": "success", "result": { "new_path": "Team/Player" } },
+    "errorInbound": { "id": "t5-reparent-node", "status": "error", "error": { "code": "CANNOT_REPARENT_ROOT", "message": "Cannot reparent the root node" } }
+  },
+  "get_editor_state": {
+    "outbound": { "id": "t5-editor-state", "command": "get_editor_state", "params": {} },
+    "successInbound": { "id": "t5-editor-state", "status": "success", "result": { "current_scene": "res://main.tscn", "is_playing": false, "main_screen": "2D" } },
+    "errorInbound": { "id": "t5-editor-state", "status": "error", "error": { "code": "PARSE_ERROR", "message": "unparseable frame" } }
+  },
+  "get_selected_nodes": {
+    "outbound": { "id": "t5-selected-nodes", "command": "get_selected_nodes", "params": {} },
+    "successInbound": { "id": "t5-selected-nodes", "status": "success", "result": { "selected": ["/root/Main/Player"] } },
+    "errorInbound": { "id": "t5-selected-nodes", "status": "error", "error": { "code": "INVALID_FORMAT", "message": "missing field status" } }
+  },
+  "select_node": {
+    "outbound": { "id": "t5-select-node", "command": "select_node", "params": { "node_path": "/root/Main/Player" } },
+    "successInbound": { "id": "t5-select-node", "status": "success", "result": {} },
+    "errorInbound": { "id": "t5-select-node", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Player" } }
+  },
+  "set_2d_viewport": {
+    "outbound": { "id": "t5-2d-viewport", "command": "set_2d_viewport", "params": { "center_x": 100, "center_y": 200, "zoom": 2 } },
+    "successInbound": { "id": "t5-2d-viewport", "status": "success", "result": { "center": { "x": 100, "y": 200 }, "zoom": 2 } },
+    "errorInbound": { "id": "t5-2d-viewport", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "zoom must be positive" } }
+  },
+  "get_project_info": {
+    "outbound": { "id": "t5-project-info", "command": "get_project_info", "params": {} },
+    "successInbound": { "id": "t5-project-info", "status": "success", "result": { "name": "infinity-mu", "godot_version": "4.7.2" } },
+    "errorInbound": { "id": "t5-project-info", "status": "error", "error": { "code": "UNKNOWN_COMMAND", "message": "unknown command get_project_info" } }
+  },
+  "get_project_settings": {
+    "outbound": { "id": "t5-project-settings", "command": "get_project_settings", "params": { "category": "application/config" } },
+    "successInbound": { "id": "t5-project-settings", "status": "success", "result": { "settings": { "application/config/name": "infinity-mu" } } },
+    "errorInbound": { "id": "t5-project-settings", "status": "error", "error": { "code": "ALREADY_CONNECTED", "message": "bridge occupied" } }
+  },
+  "get_project_staleness": {
+    "outbound": { "id": "t5-project-staleness", "command": "get_project_staleness", "params": {} },
+    "successInbound": { "id": "t5-project-staleness", "status": "success", "result": { "stale": false } },
+    "errorInbound": { "id": "t5-project-staleness", "status": "error", "error": { "code": "PARSE_ERROR", "message": "unparseable frame" } }
+  }
+}

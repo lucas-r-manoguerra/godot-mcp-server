@@ -12,6 +12,7 @@ import {
   EnvelopeError,
   type InboundFrame,
 } from "../src/godot/envelope.js";
+import envelopesFixture from "./fixtures/envelopes.json" with { type: "json" };
 
 describe("uuidv7", () => {
   it("emits unique ids with the v7 nibble", () => {
@@ -114,4 +115,34 @@ describe("framing codes", () => {
     expect((caught as EnvelopeError).retryable).toBe(false);
   });
 
+});
+
+// Task 5 (AC-03, stratum A): every passthrough tool's outbound frame
+// deep-equals its fixture and both inbound replays round-trip unchanged
+// (result passthrough per spec 1.2). Later strata append entries to the
+// same fixture object; this block iterates all of them.
+describe("passthrough envelopes (AC-03)", () => {
+  interface StratumEntry {
+    outbound: { id: string; command: string; params: Record<string, unknown> };
+    successInbound: unknown;
+    errorInbound: unknown;
+  }
+  const entries = Object.entries(
+    envelopesFixture as unknown as Record<string, StratumEntry>,
+  );
+  expect(entries.length).toBeGreaterThan(0);
+  for (const [tool, entry] of entries) {
+    it(`${tool}: outbound deep-equals {id,command,params}`, () => {
+      const built = buildOutboundFrame(entry.outbound.command, entry.outbound.params, {
+        id: entry.outbound.id,
+      });
+      expect(built).toEqual(entry.outbound);
+    });
+    it(`${tool}: success inbound round-trips untouched`, () => {
+      expect(parseInboundFrame(entry.successInbound)).toEqual(entry.successInbound);
+    });
+    it(`${tool}: error inbound round-trips untouched`, () => {
+      expect(parseInboundFrame(entry.errorInbound)).toEqual(entry.errorInbound);
+    });
+  }
 });
