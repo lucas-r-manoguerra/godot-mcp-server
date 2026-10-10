@@ -20,6 +20,15 @@ import { toolDefs as viewportDefs } from "../src/tools/viewport.js";
 import { toolDefs as assetDefs } from "../src/tools/assets.js";
 import { toolDefs as verifyDefs } from "../src/tools/verify.js";
 import { EXEC_DESCRIPTION_FENCE } from "../src/server/toolRegistry.js";
+import { z } from "zod";
+import {
+  PluginHotLoader,
+  PluginStartupError,
+  isGameContentName,
+  loadStartupPlugins,
+  type PluginModuleImporter,
+} from "../src/server/pluginLoader.js";
+import { ScopedPathSchema } from "../src/godot/scopedPath.js";
 
 function def(name: string, kind: ToolDef["kind"] = "custom", extra: Partial<ToolDef> = {}): ToolDef {
   return {
@@ -279,5 +288,186 @@ describe("tool registry", () => {
     const listSend = vi.fn(() => Promise.resolve({ paths: [] }));
     await list.handler({ glob: "**/*.png" }, { send: listSend } as unknown);
     expect(listSend.mock.calls[0]?.[1]).toEqual({ glob: "**/*.png", limit: 200 });
+  });
+});
+
+// Plugin loader (Task 10, spec 4): startup abort naming the offender,
+// hot-load per-file isolation, and the unload/reload cycle through the
+// sole non-test unregister_tool caller. Confinement failures point at
+// specs section 4.
+describe("plugin loader", () => {
+  function pluginDef(name: string, extra: Partial<ToolDef> = {}): ToolDef {
+    return {
+      name,
+      description: `${name} plugin tool`,
+      inputSchema: {},
+      handler: () => Promise.resolve({ ok: true }),
+      kind: "custom",
+      ...extra,
+    };
+  }
+
+  function stubImporter(modules: Record<string, unknown>): PluginModuleImporter {
+    return (specifier: string): Promise<unknown> => {
+      if (!Object.hasOwn(modules, specifier)) {
+        return Promise.reject(new Error(`MODULE_NOT_FOUND: ${specifier}`));
+      }
+      return Promise.resolve(modules[specifier]);
+    };
+  }
+
+  it("startup load aborts naming the offender (DUPLICATE_TOOL fail-fast)", async () => {
+    const registry = new ToolRegistry();
+    registry.register_tool(def("server_status", "builtin"));
+    const importer = stubImporter({
+      "./good.ts": { toolDefs: [pluginDef("good_tool")] },
+      "./bad.ts": { toolDefs: [pluginDef("server_status")] },
+    });
+    const attempt = loadStartupPlugins({
+      registry,
+      plugins: ["./good.ts", "./bad.ts"],
+      importer,
+    });
+    await expect(attempt).rejects.toThrow(PluginStartupError);
+    await expect(attempt).rejects.toThrow("./bad.ts");
+    await expect(attempt).rejects.toThrow("DUPLICATE_TOOL");
+    // The offender path is carried structurally, not just in text.
+    await attempt.catch((err: unknown) => {
+      expect((err as PluginStartupError).pluginPath).toBe("./bad.ts");
+    });
+  });
+
+  it("startup load aborts on a missing module, naming it", async () => {
+    const registry = new ToolRegistry();
+    const attempt = loadStartupPlugins({
+      registry,
+      plugins: ["./missing.ts"],
+      importer: stubImporter({}),
+    });
+    await expect(attempt).rejects.toThrow("./missing.ts");
+  });
+
+  it("hot-load isolates per-file failures (log + skip, server stays up)", async () => {
+    const registry = new ToolRegistry();
+    const importer = stubImporter({
+      "./good.ts": { toolDefs: [pluginDef("hot_good")] },
+    });
+    const loader = new PluginHotLoader(registry, importer);
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      const result = await loader.loadFiles(["./good.ts", "./broken.ts"]);
+      expect(result.loaded).toEqual(["hot_good"]);
+      expect(result.skipped.length).toBe(1);
+      expect(result.skipped[0]?.file).toBe("./broken.ts");
+      expect(registry.resolve("hot_good")?.kind).toBe("custom");
+      expect(warn).toHaveBeenCalledOnce();
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
+  it("unload/reload frees names for re-registration; in-flight calls complete", async () => {
+    const registry = new ToolRegistry();
+    let release!: (value: unknown) => void;
+    const gate = new Promise<unknown>((resolve) => {
+      release = resolve;
+    });
+    const importer = stubImporter({
+      "./cyclic.ts": {
+        toolDefs: [pluginDef("cyclic_tool", { handler: () => gate })],
+      },
+    });
+    const loader = new PluginHotLoader(registry, importer);
+    await loader.loadFile("./cyclic.ts");
+    const send = vi.fn(() => Promise.resolve({ ok: true }));
+    const inFlight = registry.resolve("cyclic_tool")?.handler({}, { send });
+    if (inFlight === undefined) throw new Error("cyclic_tool did not load");
+    // Unload mid-flight: the map entry drops (sole non-test
+    // unregister_tool caller) while the running handler is untouched.
+    expect(await loader.unloadFile("./cyclic.ts")).toBe(true);
+    expect(registry.resolve("cyclic_tool")).toBeUndefined();
+    release({ done: true });
+    await expect(inFlight).resolves.toEqual({ done: true });
+    // The freed name re-registers without DUPLICATE_TOOL.
+    await expect(loader.loadFile("./cyclic.ts")).resolves.toEqual(["cyclic_tool"]);
+    expect(registry.resolve("cyclic_tool")?.kind).toBe("custom");
+    expect(await loader.unloadFile("./never-loaded.ts")).toBe(false);
+  });
+
+  it("plugin defs always land as custom; game-content pilots stay project-side", async () => {
+    const registry = new ToolRegistry();
+    const importer = stubImporter({
+      "./pilot.ts": {
+        toolDefs: [
+          pluginDef("infinity_mu_scout", { kind: "builtin" as ToolDef["kind"] }),
+        ],
+      },
+    });
+    await loadStartupPlugins({ registry, plugins: ["./pilot.ts"], importer });
+    // Closed core: even a builtin-kind declaration lands in custom.
+    expect(registry.resolve("infinity_mu_scout")?.kind).toBe("custom");
+    expect(isGameContentName("infinity_mu_scout")).toBe(true);
+    expect(isGameContentName("class_list")).toBe(false);
+    // Custom-map membership proof: unregister (custom-only) succeeds.
+    expect(registry.unregister_tool("infinity_mu_scout")).toBe(true);
+  });
+
+  it("confined handlers reject transport/sync-IO/listeners, citing specs section 4", async () => {
+    const cases: Array<[string, ToolDef["handler"]]> = [
+      ["raw WebSocket", () => {
+        void "new WebSocket()";
+        return Promise.resolve(null);
+      }],
+      ["blocking sync I/O", () => Promise.resolve(typeof execSync)],
+      ["network listener", () => {
+        void "server.listen(0)";
+        return Promise.resolve(null);
+      }],
+    ];
+    for (const [label, handler] of cases) {
+      const registry = new ToolRegistry();
+      const importer = stubImporter({
+        "./wild.ts": { toolDefs: [pluginDef("wild_tool", { handler })] },
+      });
+      const attempt = loadStartupPlugins({
+        registry,
+        plugins: ["./wild.ts"],
+        importer,
+      });
+      await expect(attempt, label).rejects.toThrow(/specs\.md section 4/);
+      expect(registry.resolve("wild_tool"), label).toBeUndefined();
+    }
+  });
+
+  it("sample plugin tool honours the shared scope guard", async () => {
+    const registry = new ToolRegistry();
+    const importer = stubImporter({
+      "./sample.ts": {
+        toolDefs: [
+          {
+            name: "sample_plugin_echo",
+            description: "Sample plugin tool honouring the shared scope guard.",
+            inputSchema: { path: ScopedPathSchema },
+            handler: (args: Record<string, unknown>, ctx: unknown) => {
+              const parsed = z.object({ path: ScopedPathSchema }).parse(args);
+              const context = ctx as {
+                send: (c: string, p?: Record<string, unknown>) => Promise<unknown>;
+              };
+              return context.send("sample_plugin_echo", { ...parsed });
+            },
+            kind: "custom",
+          },
+        ],
+      },
+    });
+    await loadStartupPlugins({ registry, plugins: ["./sample.ts"], importer });
+    const found = registry.resolve("sample_plugin_echo");
+    if (found === undefined) throw new Error("sample plugin tool did not load");
+    const send = vi.fn(() => Promise.resolve({ echoed: true }));
+    await found.handler({ path: "res://mods/sample.cfg" }, { send } as unknown);
+    expect(send).toHaveBeenCalledOnce();
+    expect(() =>
+      found.handler({ path: "/abs/escape.cfg" }, { send } as unknown),
+    ).toThrow();
   });
 });
