@@ -1,0 +1,49 @@
+{
+  "full_record": {
+    "addon_version": "4.1.11",
+    "godot_version": "4.7.2",
+    "project_path": "/proj/infinity-mu",
+    "project_name": "infinity-mu",
+    "server_version_received": "godot-mcp-server/0.1.0"
+  },
+  "cases": {
+    "auth_gated_full": {
+      "peer": "auth-gated addon",
+      "auth_reply": { "status": "success", "result": { "ok": true } },
+      "handshake_reply": { "status": "success", "result": "$full_record" },
+      "expected_mode": "auth"
+    },
+    "vanilla_modern_full": {
+      "peer": "vanilla modern (no auth)",
+      "auth_reply": { "status": "error", "error": { "code": "UNKNOWN_COMMAND", "message": "unknown command auth" } },
+      "handshake_reply": { "status": "success", "result": "$full_record" },
+      "heartbeat_reply": { "status": "success", "result": { "alive": true } },
+      "expected_noauth_mode": "no-auth-full",
+      "expected_default_mode": "no-auth-full"
+    },
+    "vanilla_legacy": {
+      "peer": "vanilla legacy (heartbeat only)",
+      "handshake_reply": { "status": "error", "error": { "code": "UNKNOWN_COMMAND", "message": "unknown command mcp_handshake" } },
+      "heartbeat_reply": { "status": "success", "result": { "alive": true } },
+      "expected_mode": "no-auth-legacy"
+    },
+    "auth_required_on_mismatch": {
+      "peer": "auth-gated addon met with --no-auth",
+      "handshake_reply": { "status": "error", "error": { "code": "AUTH_REQUIRED", "message": "send auth first" } },
+      "auth_reply": { "status": "success", "result": { "ok": true } },
+      "reauth_handshake_reply": { "status": "success", "result": "$full_record" },
+      "expected_mode": "auth"
+    },
+    "auth_failed_once_then_success": {
+      "peer": "rotated token, re-read fixes it",
+      "first_token": "deadbeef00",
+      "good_token": "cafef00d11",
+      "auth_replies": [
+        { "status": "error", "error": { "code": "AUTH_FAILED", "message": "wrong token" } },
+        { "status": "success", "result": { "ok": true } }
+      ],
+      "handshake_reply": { "status": "success", "result": "$full_record" },
+      "expected_mode": "auth"
+    }
+  }
+}
