@@ -26,6 +26,10 @@ export const WS_PAYLOAD_CAP_BYTES = 16 * 1024 * 1024;
 
 // Keys that live in MCP tool arguments but MUST NOT cross the wire
 // (spec 1.1: timeouts, caps; unknown keys are never forwarded).
+// NOTE (stratum B): max_width is deliberately NOT listed here. It is a
+// verbatim addon wire param (screenshot_commands.gd reads
+// params.get("max_width")); stripping it would silently drop the spec-5
+// screenshot default before it reaches the editor (AC-06).
 export const SERVER_LOCAL_OPTION_KEYS: readonly string[] = [
   "timeout_ms",
   "timeoutMs",
@@ -33,8 +37,6 @@ export const SERVER_LOCAL_OPTION_KEYS: readonly string[] = [
   "budgetMs",
   "budget_class",
   "budgetClass",
-  "max_width",
-  "maxWidth",
   "result_cap_bytes",
   "resultCapBytes",
 ];
