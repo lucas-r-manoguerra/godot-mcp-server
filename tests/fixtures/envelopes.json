@@ -453,5 +453,40 @@
     "outbound": { "id": "t8-delete-node", "command": "delete_node", "params": {"node_path": "/root/Main/Enemy", "confirm_name": "Enemy"} },
     "successInbound": { "id": "t8-delete-node", "status": "success", "result": {"deleted": true, "node_path": "/root/Main/Enemy"} },
     "errorInbound": { "id": "t8-delete-node", "status": "error", "error": { "code": "NODE_NOT_FOUND", "message": "Node not found: /root/Main/Enemy" } }
+  },
+  "connect_signal": {
+    "outbound": { "id": "t9-connect-signal", "command": "connect_signal", "params": {"node_path": "/root/Main/Button", "signal": "pressed", "target_path": "/root/Main", "method": "_on_button_pressed", "binds": []} },
+    "successInbound": { "id": "t9-connect-signal", "status": "success", "result": {"connected": true} },
+    "errorInbound": { "id": "t9-connect-signal", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "method is required" } }
+  },
+  "disconnect_signal": {
+    "outbound": { "id": "t9-disconnect-signal", "command": "disconnect_signal", "params": {"node_path": "/root/Main/Button", "signal": "pressed", "target_path": "/root/Main", "method": "_on_button_pressed"} },
+    "successInbound": { "id": "t9-disconnect-signal", "status": "success", "result": {"disconnected": true} },
+    "errorInbound": { "id": "t9-disconnect-signal", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "no such connection" } }
+  },
+  "set_3d_viewport": {
+    "outbound": { "id": "t9-set-3d-viewport", "command": "set_3d_viewport", "params": {"position": {"x": 0, "y": 5, "z": 10}, "rotation": {"x": -0.5, "y": 0, "z": 0}} },
+    "successInbound": { "id": "t9-set-3d-viewport", "status": "success", "result": {"position": {"x": 0, "y": 5, "z": 10}, "rotation": {"x": -0.5, "y": 0, "z": 0}} },
+    "errorInbound": { "id": "t9-set-3d-viewport", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "position is required" } }
+  },
+  "focus_selection": {
+    "outbound": { "id": "t9-focus-selection", "command": "focus_selection", "params": {"node_paths": ["/root/Main/Player"]} },
+    "successInbound": { "id": "t9-focus-selection", "status": "success", "result": {"focused": 1} },
+    "errorInbound": { "id": "t9-focus-selection", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "node_paths must list 1..64 nodes" } }
+  },
+  "import_asset": {
+    "outbound": { "id": "t9-import-asset", "command": "import_asset", "params": {"path": "res://icon.svg", "reimport": false} },
+    "successInbound": { "id": "t9-import-asset", "status": "success", "result": {"path": "res://icon.svg", "status": "imported", "messages": []} },
+    "errorInbound": { "id": "t9-import-asset", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "path must satisfy the scope guard" } }
+  },
+  "uid_resolve": {
+    "outbound": { "id": "t9-uid-resolve", "command": "uid_resolve", "params": {"uid": "uid://b1abc2def"} },
+    "successInbound": { "id": "t9-uid-resolve", "status": "success", "result": {"uid": "uid://b1abc2def", "res_path": "res://icon.svg"} },
+    "errorInbound": { "id": "t9-uid-resolve", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "uid must match ^uid://" } }
+  },
+  "list_assets": {
+    "outbound": { "id": "t9-list-assets", "command": "list_assets", "params": {"glob": "**/*.png", "limit": 200} },
+    "successInbound": { "id": "t9-list-assets", "status": "success", "result": {"paths": ["res://icon.svg"], "truncated": false} },
+    "errorInbound": { "id": "t9-list-assets", "status": "error", "error": { "code": "INVALID_PARAMS", "message": "glob is required" } }
   }
 }
