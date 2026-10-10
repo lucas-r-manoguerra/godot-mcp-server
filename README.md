@@ -99,6 +99,12 @@ this order: `GODOT_MCP_TOKEN` env (canonical), then
 `<project>/.godot/mcp-token.json`, then the editor-log scrape fallback
 (which warns and tells you to set the env var).
 
+`<project>` is the Godot project dir, resolved as: `--project-dir`
+flag > `GODOT_PROJECT_DIR` env / `godot-mcp.projectDir` config >
+current working directory. This covers the live split where the server
+runs in cwd X while the Godot project lives in sibling Y — point
+`--project-dir` (or the env var) at Y so the status-file source is found.
+
 ```bash
 export GODOT_MCP_TOKEN="<token-from-the-editor>"
 npx -y godot-mcp-server@0.1.0
@@ -161,7 +167,11 @@ Sources: `src/transports/stdio.ts`, `src/transports/http.ts`,
 ## 4. Tool-call flow
 
 One frame in flight (FIFO). Budgets, caps, and typed errors apply per hop;
-check-level failures are coded entries, never null-with-success.
+check-level failures are coded entries, never null-with-success. The WS
+connection is lazy: the first tool call opens the editor socket (a single
+shared connection in flight, even under concurrent first calls),
+negotiates auth-first, then sends the command. With no editor listening
+the call fails fast with an actionable error instead of hanging.
 
 ```mermaid
 sequenceDiagram
@@ -526,6 +536,7 @@ Resolution order mirrors the addon: `custom > gap > passthrough > builtin`.
 | Key | Default | Env overlay |
 |---|---|---|
 | `port` (bridge WS port) | `6550` | `GODOT_MCP_PORT` |
+| `projectDir` (Godot project dir for the token status file) | cwd | `GODOT_PROJECT_DIR` (+ `--project-dir` flag wins) |
 | `relayTimeoutMs` (ws-roundtrip override) | `15000` | `GODOT_MCP_RELAY_TIMEOUT_MS` |
 | `pluginDir` (hot-load root) | `<project>/.godot-mcp/plugins` | `GODOT_MCP_PLUGIN_DIR` |
 | `godotBinary` (explicit Godot path) | `null` (discovery) | `GODOT_MCP_GODOT_BINARY` |

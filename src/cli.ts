@@ -12,21 +12,24 @@ export interface CliFlags {
   http: boolean;
   port: number | null;
   noAuth: boolean;
+  projectDir: string | null;
   help: boolean;
 }
 
 export const USAGE = `godot-mcp-server: bridge MCP clients and the running Godot editor
 
-usage: godot-mcp-server [--http [--port <n>]] [--no-auth] [--help]
+usage: godot-mcp-server [--http [--port <n>]] [--no-auth] [--project-dir <path>] [--help]
 
   --http       serve Streamable HTTP on 127.0.0.1 (default: stdio)
   --port <n>   http listen port (default ${DEFAULT_HTTP_PORT})
   --no-auth    negotiate against vanilla addons (handshake lands in Task 4)
+  --project-dir <path>  Godot project dir for the token status file
+               (default: cwd; see GODOT_PROJECT_DIR / godot-mcp.projectDir)
   --help       print this text and exit 0
 `;
 
 export function parseArgs(argv: readonly string[]): CliFlags {
-  const flags: CliFlags = { http: false, port: null, noAuth: false, help: false };
+  const flags: CliFlags = { http: false, port: null, noAuth: false, projectDir: null, help: false };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i] ?? "";
     if (arg === "--http") flags.http = true;
@@ -38,6 +41,11 @@ export function parseArgs(argv: readonly string[]): CliFlags {
       const parsed = Number.parseInt(raw, 10);
       if (Number.isNaN(parsed)) throw new Error(`invalid --port value: "${raw}"`);
       flags.port = parsed;
+    } else if (arg === "--project-dir" || arg.startsWith("--project-dir=")) {
+      const raw = arg.includes("=") ? arg.slice("--project-dir=".length) : (argv[i + 1] ?? "");
+      if (!arg.includes("=")) i += 1;
+      if (raw.length === 0) throw new Error(`invalid --project-dir value: "${raw}"`);
+      flags.projectDir = raw;
     } else throw new Error(`unknown flag: "${arg}" (see --help)`);
   }
   return flags;
@@ -71,9 +79,19 @@ export async function main(
     out(USAGE);
     exit(0);
   }
-  loadConfig(); // validates env overlay today; bridge wiring lands in Task 3+
-  if (flags.http) await serveHttp({ port: resolveHttpPort(flags) });
-  else await serveStdio();
+  // Project-dir triad: --project-dir flag > GODOT_PROJECT_DIR env /
+  // godot-mcp.projectDir config > cwd (loadConfig default). The bridge
+  // port rides config.port (default 6550); the factory lazy-connects.
+  const config = loadConfig(
+    flags.projectDir !== null ? { overrides: { projectDir: flags.projectDir } } : {},
+  );
+  const built = buildServer({
+    projectDir: config.projectDir,
+    bridgePort: config.port,
+    noAuth: flags.noAuth,
+  });
+  if (flags.http) await serveHttp({ built, port: resolveHttpPort(flags) });
+  else await serveStdio({ built });
 }
 
 // Resolved through realpath so npm .bin symlinks (argv[1] names the

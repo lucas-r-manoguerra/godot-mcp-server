@@ -14,6 +14,11 @@ export interface GodotMcpConfig {
   godotBinary: string | null;
   // Startup plugin module paths (design Q2: godot-mcp.plugins).
   plugins: string[];
+  // Godot project dir (status-file + log-scrape root). The live case is
+  // the server running in cwd X with the Godot project in sibling Y, so
+  // this defaults to the project root (cwd) and is overridable via flag,
+  // config key, or env below.
+  projectDir: string;
 }
 
 export const DEFAULT_PORT = 6550;
@@ -31,6 +36,7 @@ export function defaultConfig(projectRoot: string): GodotMcpConfig {
     pluginDir: defaultPluginDir(projectRoot),
     godotBinary: null,
     plugins: [],
+    projectDir: projectRoot,
   };
 }
 
@@ -84,11 +90,17 @@ export function loadConfig(opts: LoadConfigOptions = {}): GodotMcpConfig {
   if (envPlugins !== undefined && envPlugins.length > 0) {
     fromEnv.plugins = envPlugins.split(",").map((s) => s.trim()).filter((s) => s.length > 0);
   }
+  if (env["GODOT_PROJECT_DIR"] !== undefined && env["GODOT_PROJECT_DIR"].length > 0) {
+    fromEnv.projectDir = env["GODOT_PROJECT_DIR"];
+  }
 
   const merged: GodotMcpConfig = { ...base, ...fromEnv, ...(opts.overrides ?? {}) };
 
   const pluginDir =
     merged.pluginDir === null ? null : resolveAgainstRoot(merged.pluginDir, projectRoot);
   const plugins = merged.plugins.map((p) => resolveAgainstRoot(p, projectRoot));
-  return { ...merged, pluginDir, plugins };
+  const projectDir = path.isAbsolute(merged.projectDir)
+    ? merged.projectDir
+    : path.resolve(projectRoot, merged.projectDir);
+  return { ...merged, pluginDir, plugins, projectDir };
 }
